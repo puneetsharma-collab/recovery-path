@@ -1,36 +1,24 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
+import fs from 'fs';
 import path from 'path';
 
-const DB_PATH = path.join(process.cwd(), 'data.json');
+export async function POST(req: Request) {
+  const { userId, password, isLogin } = await req.json();
+  const filePath = path.join(process.cwd(), 'data.json');
+  const db = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
-async function readDB() {
-  const raw = await fs.readFile(DB_PATH, 'utf8');
-  return JSON.parse(raw);
-}
+  if (isLogin) {
+    // LOGIN MODE
+    if (!db[userId]) return NextResponse.json({ error: 'User ID not found' }, { status: 404 });
+    if (db[userId].password !== password) return NextResponse.json({ error: 'Wrong password' }, { status: 401 });
+    return NextResponse.json({ userId });
+  } else {
+    // JOIN MODE
+    if (db[userId]) return NextResponse.json({ error: 'That ID is already taken!' }, { status: 400 });
+    if (password.length < 4) return NextResponse.json({ error: 'Password must be 4+ characters' }, { status: 400 });
 
-async function writeDB(db: any) {
-  await fs.writeFile(DB_PATH, JSON.stringify(db, null, 2));
-}
-
-function generateCode() {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
-export async function POST() {
-  const db = await readDB();
-
-  let code;
-  do {
-    code = generateCode();
-  } while (db.users.find((u: any) => u.code === code));
-
-  db.users.push({
-    code,
-    checkins: []
-  });
-
-  await writeDB(db);
-
-  return NextResponse.json({ code });
+    db[userId] = { password: password, checkins: [] };
+    fs.writeFileSync(filePath, JSON.stringify(db, null, 2));
+    return NextResponse.json({ userId });
+  }
 }
