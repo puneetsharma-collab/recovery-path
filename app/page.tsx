@@ -21,14 +21,8 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <Link href="/chat">
-              <button className="w-full bg-slate-900 hover:bg-blue-600 transition-all text-white px-8 py-5 rounded-2xl font-bold text-xl shadow-2xl active:scale-95">
-                Talk to AI Coach →
-              </button>
-            </Link>
-
             <Link href="/checkin">
-              <button className="w-full bg-white border-2 border-slate-200 text-slate-700 hover:border-emerald-400 transition-all px-8 py-5 rounded-2xl font-bold text-xl active:scale-95">
+              <button className="w-full bg-slate-900 hover:bg-blue-600 transition-all text-white px-8 py-5 rounded-2xl font-bold text-xl shadow-2xl active:scale-95">
                 Daily Check-in
               </button>
             </Link>

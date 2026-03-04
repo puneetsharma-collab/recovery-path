@@ -1,13 +1,12 @@
 # Recovery Path
 
-A Next.js 13 app-router application that helps users track habit recovery. Features an AI coach (GPT-4o-mini), daily check-ins, and an emergency panic page.
+A Next.js 13 app-router application that helps users track habit recovery. Features daily check-ins and an emergency panic page.
 
 ## Architecture
 
 - **Framework**: Next.js 13 (App Router)
 - **Styling**: Tailwind CSS
 - **Storage**: Local `data.json` file (flat-file JSON database)
-- **AI**: OpenAI GPT-4o-mini via server-side API route
 
 ## Structure
 
@@ -16,12 +15,10 @@ app/
   layout.tsx          # Root layout
   page.tsx            # Home page
   globals.css         # Global styles
-  chat/page.tsx       # AI Coach chat page
   checkin/page.tsx    # Daily check-in page
   dashboard/page.tsx  # Dashboard page
   panic/page.tsx      # Emergency calm-down page
   api/
-    chat/route.ts     # POST /api/chat — OpenAI proxy
     checkin/route.ts  # GET/POST /api/checkin — check-in storage
     code/route.ts     # POST /api/code — user auth (join/login)
 data.json             # Flat-file user database
