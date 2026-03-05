@@ -19,30 +19,35 @@ export async function GET(req: Request) {
   return NextResponse.json(db[code!]);
 }
 
-// 2. THIS PART HANDLES SAVING A NEW "STAYED STRONG" DAY
+// 2. THIS PART HANDLES SAVING A NEW "STAYED STRONG" OR "SLIP" DAY
 export async function POST(req: Request) {
-  const { code } = await req.json();
+  const { code, action } = await req.json(); // action: 'strong' | 'slip'
   const filePath = path.join(process.cwd(), 'data.json');
 
-  // Open the logbook
   const fileData = fs.readFileSync(filePath, 'utf8');
   const db = JSON.parse(fileData);
 
-  // If this is a brand new user, create their spot in the book
   if (!db[code]) {
-    db[code] = { checkins: [] };
+    db[code] = { checkins: [], slips: [] };
   }
+  if (!db[code].slips) db[code].slips = [];
 
-  // Get today's date (e.g., "2026-03-05")
   const today = new Date().toISOString().split('T')[0];
 
-  // Only add the date if they haven't checked in already today
-  if (!db[code].checkins.includes(today)) {
-    db[code].checkins.push(today);
-    // Save the logbook back to the disk
-    fs.writeFileSync(filePath, JSON.stringify(db, null, 2));
+  if (action === 'strong') {
+    // Remove from slips if present
+    db[code].slips = db[code].slips.filter((d: string) => d !== today);
+    if (!db[code].checkins.includes(today)) {
+      db[code].checkins.push(today);
+    }
+  } else if (action === 'slip') {
+    // Remove from checkins if present
+    db[code].checkins = db[code].checkins.filter((d: string) => d !== today);
+    if (!db[code].slips.includes(today)) {
+      db[code].slips.push(today);
+    }
   }
 
-  // Send back the updated list so the screen shows "1 Day", "2 Days", etc.
+  fs.writeFileSync(filePath, JSON.stringify(db, null, 2));
   return NextResponse.json(db[code]);
 }

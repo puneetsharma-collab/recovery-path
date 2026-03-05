@@ -14,8 +14,9 @@ export default function Checkin() {
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(false);
   const [checkins, setCheckins] = useState<string[]>([]);
+  const [slips, setSlips] = useState<string[]>([]);
   const [msg, setMsg] = useState('');
-  const [quote, setQuote] = useState(''); // Secret spot for your motivation!
+  const [quote, setQuote] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -30,7 +31,7 @@ export default function Checkin() {
     const res = await fetch('/api/code', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: id, password: pass, isLogin })
+      body: JSON.stringify({ userId: id, password: pass, isLogin: true })
     });
     const data = await res.json();
     if (data.error) {
@@ -50,34 +51,46 @@ export default function Checkin() {
     const res = await fetch(`/api/checkin?code=${id}`);
     const data = await res.json();
     setCheckins(data.checkins || []);
+    setSlips(data.slips || []);
   }
 
-  async function doCheckin() {
+  async function doCheckin(action: 'strong' | 'slip') {
     const res = await fetch('/api/checkin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: userId, password: password })
+      body: JSON.stringify({ code: userId, action })
     });
     const data = await res.json();
     if (data.error) {
       setMsg(data.error);
     } else {
       setCheckins(data.checkins || []);
-      setMsg('Success saved! 💙');
-      // Pick a random quote to show!
-      setQuote(MOTIVATION[Math.floor(Math.random() * MOTIVATION.length)]);
+      setSlips(data.slips || []);
+      if (action === 'strong') {
+        setMsg('Success saved! 💙');
+        setQuote(MOTIVATION[Math.floor(Math.random() * MOTIVATION.length)]);
+      } else {
+        setMsg("It's okay. Tomorrow is a new start. 🫂");
+        setQuote("Failure is just a bruise, not a tattoo. Rest, and restart.");
+      }
     }
-  }
-
-  function handleSlip() {
-    setMsg("It's okay to have a tough day. A slip doesn't mean you're back at zero. Breathe, and let's try again tomorrow. 🫂");
-    setQuote("Failure is just a bruise, not a tattoo. Rest, and restart.");
   }
 
   function logout() {
     localStorage.clear();
     window.location.reload();
   }
+
+  // Calendar Logic
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDay = new Date(year, month, 1).getDay();
+  
+  const calendarDays = [];
+  for (let i = 0; i < firstDay; i++) calendarDays.push(null);
+  for (let i = 1; i <= daysInMonth; i++) calendarDays.push(i);
 
   if (isLoggedIn) {
     return (
@@ -86,19 +99,44 @@ export default function Checkin() {
           <h1 className="text-3xl font-black text-slate-900">Path of @{userId}</h1>
 
           <div className="space-y-4">
-            <button onClick={doCheckin} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-6 rounded-3xl font-black text-2xl shadow-xl shadow-emerald-100 active:scale-95 transition-all">
+            <button onClick={() => doCheckin('strong')} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-6 rounded-3xl font-black text-2xl shadow-xl shadow-emerald-100 active:scale-95 transition-all">
               I Stayed Strong!
             </button>
 
-            <button onClick={handleSlip} className="w-full bg-rose-50 border-2 border-rose-100 text-rose-600 py-4 rounded-3xl font-bold active:scale-95 transition-all">
+            <button onClick={() => doCheckin('slip')} className="w-full bg-rose-50 border-2 border-rose-100 text-rose-600 py-4 rounded-3xl font-bold active:scale-95 transition-all">
               I Slipped / I'm Struggling
             </button>
           </div>
 
           <div className="bg-slate-50 p-6 rounded-[32px] flex justify-between items-center">
             <span className="font-bold text-slate-400 uppercase tracking-widest text-xs">Streak</span>
-            {/* FIXED: text-slate-900 makes it visible! */}
             <span className="font-black text-4xl text-slate-900">{checkins.length} Days</span>
+          </div>
+
+          {/* CALENDAR SECTION */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-[0.2em]">Activity Map</h3>
+            <div className="grid grid-cols-7 gap-2">
+              {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => (
+                <div key={d} className="text-[10px] font-black text-slate-300">{d}</div>
+              ))}
+              {calendarDays.map((day, i) => {
+                if (!day) return <div key={`empty-${i}`} />;
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const isStrong = checkins.includes(dateStr);
+                const isSlip = slips.includes(dateStr);
+                
+                let bgColor = 'bg-slate-100';
+                if (isStrong) bgColor = 'bg-emerald-500 text-white';
+                if (isSlip) bgColor = 'bg-rose-500 text-white';
+
+                return (
+                  <div key={day} className={`aspect-square flex items-center justify-center rounded-xl text-xs font-bold ${bgColor}`}>
+                    {day}
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {quote && (
