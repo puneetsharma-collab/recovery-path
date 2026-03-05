@@ -27,6 +27,12 @@ export default function Home() {
               </button>
             </Link>
 
+            <Link href="/test">
+              <button className="w-full bg-white border-2 border-slate-200 text-slate-700 hover:border-blue-400 transition-all px-8 py-5 rounded-2xl font-bold text-xl active:scale-95">
+                Take Dependency Test
+              </button>
+            </Link>
+
             {/* --- ADDED: EMERGENCY PANIC BUTTON --- */}
             <Link href="/panic">
               <button className="w-full mt-2 bg-rose-50 border-2 border-rose-200 text-rose-600 py-4 rounded-2xl font-black text-lg hover:bg-rose-100 transition-all flex items-center justify-center gap-2 active:scale-95">

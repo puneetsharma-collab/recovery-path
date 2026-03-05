@@ -16,6 +16,7 @@ app/
   page.tsx            # Home page
   globals.css         # Global styles
   checkin/page.tsx    # Daily check-in page
+  test/page.tsx       # Addiction dependency test page
   dashboard/page.tsx  # Dashboard page
   panic/page.tsx      # Emergency calm-down page
   api/
