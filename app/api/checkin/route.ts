@@ -2,6 +2,29 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
+// Helper: Calculate consecutive streak
+function calculateStreak(checkins: string[]): number {
+  if (checkins.length === 0) return 0;
+
+  const sorted = checkins.sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+  const today = new Date().toISOString().split('T')[0];
+  
+  let streak = 0;
+  let checkDate = new Date(today);
+
+  for (let i = 0; i < 365; i++) {
+    const dateStr = checkDate.toISOString().split('T')[0];
+    if (sorted.includes(dateStr)) {
+      streak++;
+    } else {
+      break;
+    }
+    checkDate.setDate(checkDate.getDate() - 1);
+  }
+
+  return streak;
+}
+
 // 1. THIS PART HANDLES LOADING YOUR PROGRESS
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -13,10 +36,13 @@ export async function GET(req: Request) {
 
   // If the user doesn't exist yet, give them an empty list
   if (!db[code!]) {
-    return NextResponse.json({ checkins: [] });
+    return NextResponse.json({ checkins: [], slips: [], streak: 0 });
   }
 
-  return NextResponse.json(db[code!]);
+  const userData = db[code!];
+  const streak = calculateStreak(userData.checkins || []);
+
+  return NextResponse.json({ ...userData, streak });
 }
 
 // 2. THIS PART HANDLES SAVING A NEW "STAYED STRONG" OR "SLIP" DAY
@@ -49,5 +75,6 @@ export async function POST(req: Request) {
   }
 
   fs.writeFileSync(filePath, JSON.stringify(db, null, 2));
-  return NextResponse.json(db[code]);
+  const streak = calculateStreak(db[code].checkins || []);
+  return NextResponse.json({ ...db[code], streak });
 }

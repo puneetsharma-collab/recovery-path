@@ -15,6 +15,7 @@ export default function Checkin() {
   const [isLogin, setIsLogin] = useState(false);
   const [checkins, setCheckins] = useState<string[]>([]);
   const [slips, setSlips] = useState<string[]>([]);
+  const [streak, setStreak] = useState(0);
   const [msg, setMsg] = useState('');
   const [quote, setQuote] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -52,6 +53,7 @@ export default function Checkin() {
     const data = await res.json();
     setCheckins(data.checkins || []);
     setSlips(data.slips || []);
+    setStreak(data.streak || 0);
   }
 
   async function doCheckin(action: 'strong' | 'slip') {
@@ -66,6 +68,7 @@ export default function Checkin() {
     } else {
       setCheckins(data.checkins || []);
       setSlips(data.slips || []);
+      setStreak(data.streak || 0);
       if (action === 'strong') {
         setMsg('Success saved! 💙');
         setQuote(MOTIVATION[Math.floor(Math.random() * MOTIVATION.length)]);
@@ -110,7 +113,7 @@ export default function Checkin() {
 
           <div className="bg-slate-50 p-6 rounded-[32px] flex justify-between items-center">
             <span className="font-bold text-slate-400 uppercase tracking-widest text-xs">Streak</span>
-            <span className="font-black text-4xl text-slate-900">{checkins.length} Days</span>
+            <span className="font-black text-4xl text-slate-900">{streak} Days</span>
           </div>
 
           {/* CALENDAR SECTION */}
