@@ -15,7 +15,9 @@ export default function Checkin() {
   const [isLogin, setIsLogin] = useState(false);
   const [checkins, setCheckins] = useState<string[]>([]);
   const [slips, setSlips] = useState<string[]>([]);
+  const [freezesUsed, setFreezesUsed] = useState<string[]>([]);
   const [streak, setStreak] = useState(0);
+  const [freezes, setFreezes] = useState(0);
   const [msg, setMsg] = useState('');
   const [quote, setQuote] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -53,7 +55,9 @@ export default function Checkin() {
     const data = await res.json();
     setCheckins(data.checkins || []);
     setSlips(data.slips || []);
+    setFreezesUsed(data.freezesUsed || []);
     setStreak(data.streak || 0);
+    setFreezes(data.freezes || 0);
   }
 
   async function doCheckin(action: 'strong' | 'slip') {
@@ -68,13 +72,22 @@ export default function Checkin() {
     } else {
       setCheckins(data.checkins || []);
       setSlips(data.slips || []);
+      setFreezesUsed(data.freezesUsed || []);
       setStreak(data.streak || 0);
+      setFreezes(data.freezes || 0);
       if (action === 'strong') {
         setMsg('Success saved! 💙');
         setQuote(MOTIVATION[Math.floor(Math.random() * MOTIVATION.length)]);
       } else {
-        setMsg("It's okay. Tomorrow is a new start. 🫂");
-        setQuote("Failure is just a bruise, not a tattoo. Rest, and restart.");
+        const usedFreezes = (data.freezesUsed || []).length;
+        const earnedFreezes = data.freezes || 0;
+        if (usedFreezes < earnedFreezes) {
+          setMsg("You used a freeze! Your streak is safe. 🛡️");
+          setQuote("Your consistency has rewards. Keep pushing!");
+        } else {
+          setMsg("It's okay. Tomorrow is a new start. 🫂");
+          setQuote("Failure is just a bruise, not a tattoo. Rest, and restart.");
+        }
       }
     }
   }
@@ -111,9 +124,25 @@ export default function Checkin() {
             </button>
           </div>
 
-          <div className="bg-slate-50 p-6 rounded-[32px] flex justify-between items-center">
-            <span className="font-bold text-slate-400 uppercase tracking-widest text-xs">Streak</span>
-            <span className="font-black text-4xl text-slate-900">{streak} Days</span>
+          <div className="bg-slate-50 p-6 rounded-[32px] space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="font-bold text-slate-400 uppercase tracking-widest text-xs">Streak</span>
+              <span className="font-black text-4xl text-slate-900">{streak} Days</span>
+            </div>
+            <div className="border-t border-slate-200 pt-3 flex justify-between items-center">
+              <span className="font-bold text-slate-400 uppercase tracking-widest text-xs">Freezes</span>
+              <div className="flex gap-2">
+                {[...Array(freezes)].map((_, i) => {
+                  const used = freezesUsed.length > i;
+                  return (
+                    <div key={i} className={`text-2xl ${used ? 'opacity-40' : ''}`}>
+                      ❄️
+                    </div>
+                  );
+                })}
+                {freezes === 0 && <span className="text-slate-500 text-sm">Keep going! 3 days = 1 freeze, 6 days = 2 freezes</span>}
+              </div>
+            </div>
           </div>
 
           {/* CALENDAR SECTION */}
@@ -121,26 +150,48 @@ export default function Checkin() {
             <h3 className="text-sm font-bold text-slate-400 uppercase tracking-[0.2em]">Activity Map</h3>
             <h4 className="text-lg font-black text-slate-900">{new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' })}</h4>
             <div className="grid grid-cols-7 gap-2">
-              {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => (
-                <div key={d} className="text-[10px] font-black text-slate-300">{d}</div>
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d, i) => (
+                <div key={i} className="text-[10px] font-black text-slate-300">{d.charAt(0)}</div>
               ))}
               {calendarDays.map((day, i) => {
                 if (!day) return <div key={`empty-${i}`} />;
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const isStrong = checkins.includes(dateStr);
                 const isSlip = slips.includes(dateStr);
+                const isFrozen = freezesUsed.includes(dateStr);
                 
                 let bgColor = 'bg-slate-100';
-                if (isStrong) bgColor = 'bg-emerald-500 text-white';
-                if (isSlip) bgColor = 'bg-rose-500 text-white';
+                let icon = '';
+                if (isStrong) {
+                  bgColor = 'bg-emerald-500 text-white';
+                  icon = '✓';
+                } else if (isFrozen) {
+                  bgColor = 'bg-blue-400 text-white';
+                  icon = '❄️';
+                } else if (isSlip) {
+                  bgColor = 'bg-rose-500 text-white';
+                  icon = '✗';
+                }
 
                 return (
-                  <div key={day} className={`aspect-square flex items-center justify-center rounded-xl text-xs font-bold ${bgColor}`}>
-                    {day}
+                  <div key={day} className={`aspect-square flex flex-col items-center justify-center rounded-xl text-xs font-bold ${bgColor}`}>
+                    <div>{day}</div>
+                    {icon && <div className="text-xs">{icon}</div>}
                   </div>
                 );
               })}
             </div>
+          </div>
+
+          {/* FREEZE INFO SECTION */}
+          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-5 rounded-3xl border border-blue-200 space-y-3">
+            <h4 className="font-black text-slate-900 text-sm">❄️ How Freezes Work</h4>
+            <ul className="text-xs text-slate-700 space-y-2">
+              <li><strong>3 days streak:</strong> Earn 1 freeze</li>
+              <li><strong>6 days streak:</strong> Earn 2 freezes (maximum)</li>
+              <li><strong>Miss a day?</strong> Freeze is used automatically, streak stays safe</li>
+              <li><strong>No freezes left?</strong> Streak resets, but you can rebuild it</li>
+            </ul>
           </div>
 
           {quote && (
