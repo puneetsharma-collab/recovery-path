@@ -116,6 +116,7 @@ export default function Checkin() {
           {/* CALENDAR SECTION */}
           <div className="space-y-4">
             <h3 className="text-sm font-bold text-slate-400 uppercase tracking-[0.2em]">Activity Map</h3>
+            <h4 className="text-lg font-black text-slate-900">{new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' })}</h4>
             <div className="grid grid-cols-7 gap-2">
               {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => (
                 <div key={d} className="text-[10px] font-black text-slate-300">{d}</div>
