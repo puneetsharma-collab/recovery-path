@@ -9,6 +9,12 @@ const MOTIVATION = [
   "Progress, not perfection. Keep walking the path. 🌱"
 ];
 
+interface DiaryEntry {
+  date: string;
+  urgeLevel: number;
+  notes: string;
+}
+
 export default function Checkin() {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
@@ -16,11 +22,16 @@ export default function Checkin() {
   const [checkins, setCheckins] = useState<string[]>([]);
   const [slips, setSlips] = useState<string[]>([]);
   const [freezesUsed, setFreezesUsed] = useState<string[]>([]);
+  const [diaryEntries, setDiaryEntries] = useState<DiaryEntry[]>([]);
   const [streak, setStreak] = useState(0);
   const [freezes, setFreezes] = useState(0);
   const [msg, setMsg] = useState('');
   const [quote, setQuote] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showDiaryForm, setShowDiaryForm] = useState(false);
+  const [urgeLevel, setUrgeLevel] = useState(5);
+  const [diaryNotes, setDiaryNotes] = useState('');
+  const [activeTab, setActiveTab] = useState<'checkin' | 'report'>('checkin');
 
   useEffect(() => {
     const savedId = localStorage.getItem('recovery_user_id');
@@ -56,11 +67,17 @@ export default function Checkin() {
     setCheckins(data.checkins || []);
     setSlips(data.slips || []);
     setFreezesUsed(data.freezesUsed || []);
+    setDiaryEntries(data.diaryEntries || []);
     setStreak(data.streak || 0);
     setFreezes(data.freezes || 0);
   }
 
   async function doCheckin(action: 'strong' | 'slip') {
+    if (action === 'strong') {
+      setShowDiaryForm(true);
+      return;
+    }
+    
     const res = await fetch('/api/checkin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -73,22 +90,42 @@ export default function Checkin() {
       setCheckins(data.checkins || []);
       setSlips(data.slips || []);
       setFreezesUsed(data.freezesUsed || []);
+      setDiaryEntries(data.diaryEntries || []);
       setStreak(data.streak || 0);
       setFreezes(data.freezes || 0);
-      if (action === 'strong') {
-        setMsg('Success saved! 💙');
-        setQuote(MOTIVATION[Math.floor(Math.random() * MOTIVATION.length)]);
+      const usedFreezes = (data.freezesUsed || []).length;
+      const earnedFreezes = data.freezes || 0;
+      if (usedFreezes < earnedFreezes) {
+        setMsg("You used a freeze! Your streak is safe. 🛡️");
+        setQuote("Your consistency has rewards. Keep pushing!");
       } else {
-        const usedFreezes = (data.freezesUsed || []).length;
-        const earnedFreezes = data.freezes || 0;
-        if (usedFreezes < earnedFreezes) {
-          setMsg("You used a freeze! Your streak is safe. 🛡️");
-          setQuote("Your consistency has rewards. Keep pushing!");
-        } else {
-          setMsg("It's okay. Tomorrow is a new start. 🫂");
-          setQuote("Failure is just a bruise, not a tattoo. Rest, and restart.");
-        }
+        setMsg("It's okay. Tomorrow is a new start. 🫂");
+        setQuote("Failure is just a bruise, not a tattoo. Rest, and restart.");
       }
+    }
+  }
+
+  async function submitDiary() {
+    const res = await fetch('/api/checkin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: userId, action: 'strong', urgeLevel, notes: diaryNotes })
+    });
+    const data = await res.json();
+    if (data.error) {
+      setMsg(data.error);
+    } else {
+      setCheckins(data.checkins || []);
+      setSlips(data.slips || []);
+      setFreezesUsed(data.freezesUsed || []);
+      setDiaryEntries(data.diaryEntries || []);
+      setStreak(data.streak || 0);
+      setFreezes(data.freezes || 0);
+      setMsg('Success saved! 💙');
+      setQuote(MOTIVATION[Math.floor(Math.random() * MOTIVATION.length)]);
+      setShowDiaryForm(false);
+      setUrgeLevel(5);
+      setDiaryNotes('');
     }
   }
 
@@ -114,6 +151,24 @@ export default function Checkin() {
         <div className="bg-white rounded-[40px] shadow-2xl p-10 max-w-md w-full space-y-8 text-center border border-slate-100">
           <h1 className="text-3xl font-black text-slate-900">Path of @{userId}</h1>
 
+          {/* TAB NAVIGATION */}
+          <div className="flex gap-2 bg-slate-100 p-2 rounded-2xl">
+            <button 
+              onClick={() => setActiveTab('checkin')}
+              className={`flex-1 py-3 rounded-xl font-bold transition-all ${activeTab === 'checkin' ? 'bg-white text-slate-900 shadow-md' : 'text-slate-500'}`}
+            >
+              Check-in
+            </button>
+            <button 
+              onClick={() => setActiveTab('report')}
+              className={`flex-1 py-3 rounded-xl font-bold transition-all ${activeTab === 'report' ? 'bg-white text-slate-900 shadow-md' : 'text-slate-500'}`}
+            >
+              Report
+            </button>
+          </div>
+
+          {activeTab === 'checkin' ? (
+            <>
           <div className="space-y-4">
             <button onClick={() => doCheckin('strong')} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-6 rounded-3xl font-black text-2xl shadow-xl shadow-emerald-100 active:scale-95 transition-all">
               I Stayed Strong!
@@ -140,7 +195,6 @@ export default function Checkin() {
                     </div>
                   );
                 })}
-                {freezes === 0 && <span className="text-slate-500 text-sm">Keep going! 3 days = 1 freeze, 6 days = 2 freezes</span>}
               </div>
             </div>
           </div>
@@ -199,9 +253,115 @@ export default function Checkin() {
               <p className="text-blue-800 font-medium italic">"{quote}"</p>
             </div>
           )}
+            </>
+          ) : (
+            <>
+              {/* REPORT TAB */}
+              <div className="space-y-4 text-left">
+                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-5 rounded-3xl border border-emerald-200 space-y-2">
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Total Check-ins</p>
+                  <p className="text-4xl font-black text-emerald-600">{checkins.length}</p>
+                </div>
+                
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-5 rounded-3xl border border-blue-200 space-y-2">
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Current Streak</p>
+                  <p className="text-4xl font-black text-blue-600">{streak} Days</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-rose-50 to-pink-50 p-5 rounded-3xl border border-rose-200 space-y-2">
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Slips</p>
+                  <p className="text-4xl font-black text-rose-600">{slips.length}</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-purple-50 to-violet-50 p-5 rounded-3xl border border-purple-200 space-y-3">
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Average Urge Level</p>
+                  <div className="space-y-2">
+                    {diaryEntries.length > 0 ? (
+                      <>
+                        <p className="text-4xl font-black text-purple-600">{(diaryEntries.reduce((sum, entry) => sum + entry.urgeLevel, 0) / diaryEntries.length).toFixed(1)}/10</p>
+                        <p className="text-xs text-slate-600">From {diaryEntries.length} entries</p>
+                      </>
+                    ) : (
+                      <p className="text-sm text-slate-500">No diary entries yet</p>
+                    )}
+                  </div>
+                </div>
+
+                {diaryEntries.length > 0 && (
+                  <div className="space-y-3 max-h-64 overflow-y-auto">
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Recent Entries</p>
+                    {[...diaryEntries].reverse().slice(0, 5).map((entry, idx) => (
+                      <div key={idx} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+                        <div className="flex justify-between items-center">
+                          <p className="text-xs font-bold text-slate-400">{new Date(entry.date).toLocaleDateString()}</p>
+                          <p className="text-sm font-bold text-slate-600">Urge: {entry.urgeLevel}/10</p>
+                        </div>
+                        {entry.notes && <p className="text-sm text-slate-700">{entry.notes}</p>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
 
           <button onClick={logout} className="text-slate-300 text-[10px] font-bold uppercase tracking-[0.2em] hover:text-red-400">Logout</button>
         </div>
+
+        {/* DIARY FORM MODAL */}
+        {showDiaryForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-[40px] shadow-2xl p-10 max-w-md w-full space-y-6">
+              <h2 className="text-2xl font-black text-slate-900">Daily Diary</h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-bold text-slate-600 mb-3">How strong was your urge to relapse? (0-10)</label>
+                  <div className="flex items-center gap-4">
+                    <input 
+                      type="range" 
+                      min="0" 
+                      max="10" 
+                      value={urgeLevel}
+                      onChange={(e) => setUrgeLevel(parseInt(e.target.value))}
+                      className="flex-1 h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                    />
+                    <div className="text-3xl font-black text-slate-900 w-12 text-center">{urgeLevel}</div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-slate-600 mb-2">What are you feeling right now?</label>
+                  <textarea 
+                    value={diaryNotes}
+                    onChange={(e) => setDiaryNotes(e.target.value)}
+                    placeholder="Write your thoughts, feelings, and reflections..."
+                    className="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl font-medium text-slate-900 outline-none focus:border-blue-400 resize-none h-28"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => {
+                    setShowDiaryForm(false);
+                    setUrgeLevel(5);
+                    setDiaryNotes('');
+                  }}
+                  className="flex-1 bg-slate-100 text-slate-600 py-3 rounded-2xl font-bold hover:bg-slate-200 transition-all"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={submitDiary}
+                  className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-2xl font-bold shadow-lg transition-all"
+                >
+                  Save Entry
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     );
   }

@@ -46,7 +46,7 @@ export async function GET(req: Request) {
 
   // If the user doesn't exist yet, give them an empty list
   if (!db[code!]) {
-    return NextResponse.json({ checkins: [], slips: [], streak: 0, freezes: 0, freezesUsed: [] });
+    return NextResponse.json({ checkins: [], slips: [], streak: 0, freezes: 0, freezesUsed: [], diaryEntries: [] });
   }
 
   const userData = db[code!];
@@ -59,17 +59,18 @@ export async function GET(req: Request) {
 
 // 2. THIS PART HANDLES SAVING A NEW "STAYED STRONG" OR "SLIP" DAY
 export async function POST(req: Request) {
-  const { code, action } = await req.json(); // action: 'strong' | 'slip'
+  const { code, action, urgeLevel, notes } = await req.json(); // action: 'strong' | 'slip'
   const filePath = path.join(process.cwd(), 'data.json');
 
   const fileData = fs.readFileSync(filePath, 'utf8');
   const db = JSON.parse(fileData);
 
   if (!db[code]) {
-    db[code] = { checkins: [], slips: [], freezesUsed: [] };
+    db[code] = { checkins: [], slips: [], freezesUsed: [], diaryEntries: [] };
   }
   if (!db[code].slips) db[code].slips = [];
   if (!db[code].freezesUsed) db[code].freezesUsed = [];
+  if (!db[code].diaryEntries) db[code].diaryEntries = [];
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -80,6 +81,18 @@ export async function POST(req: Request) {
     db[code].freezesUsed = db[code].freezesUsed.filter((d: string) => d !== today);
     if (!db[code].checkins.includes(today)) {
       db[code].checkins.push(today);
+    }
+    
+    // Save diary entry if provided
+    if (urgeLevel !== undefined || notes) {
+      // Remove any existing entry for today
+      db[code].diaryEntries = db[code].diaryEntries.filter((d: any) => d.date !== today);
+      // Add new entry
+      db[code].diaryEntries.push({
+        date: today,
+        urgeLevel: urgeLevel || 0,
+        notes: notes || ''
+      });
     }
   } else if (action === 'slip') {
     // Remove from checkins if present
