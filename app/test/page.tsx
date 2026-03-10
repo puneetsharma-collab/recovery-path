@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 const questions = [
@@ -40,6 +40,17 @@ export default function AddictionTest() {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [showResult, setShowResult] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  useEffect(() => {
+    const savedId = localStorage.getItem('recovery_user_id');
+    const savedPass = localStorage.getItem('recovery_password');
+    if (savedId && savedPass) {
+      setIsAuthorized(true);
+    } else {
+      window.location.href = '/';
+    }
+  }, []);
 
   const handleAnswer = (score: number) => {
     const newAnswers = [...answers, score];
@@ -69,6 +80,17 @@ export default function AddictionTest() {
 
     return { percentage, level, color };
   };
+
+  if (!isAuthorized) {
+    return (
+      <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="animate-pulse flex flex-col items-center space-y-4">
+          <div className="w-12 h-12 bg-blue-200 rounded-full"></div>
+          <p className="text-slate-400 font-bold animate-bounce">Resuming Session...</p>
+        </div>
+      </main>
+    );
+  }
 
   if (showResult) {
     const { percentage, level, color } = calculateResult();

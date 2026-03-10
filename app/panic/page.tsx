@@ -3,6 +3,18 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function PanicPage() {
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  useEffect(() => {
+    const savedId = localStorage.getItem('recovery_user_id');
+    const savedPass = localStorage.getItem('recovery_password');
+    if (savedId && savedPass) {
+      setIsAuthorized(true);
+    } else {
+      window.location.href = '/';
+    }
+  }, []);
+
   // 1. Breathing States
   const [phase, setPhase] = useState('Get Ready');
   const [phaseSeconds, setPhaseSeconds] = useState(3);
@@ -59,6 +71,17 @@ export default function PanicPage() {
     const secs = seconds % 60;
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
+
+  if (!isAuthorized) {
+    return (
+      <main className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+        <div className="animate-pulse flex flex-col items-center space-y-4">
+          <div className="w-12 h-12 bg-blue-900 rounded-full"></div>
+          <p className="text-blue-500 font-bold animate-bounce">Resuming Session...</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 overflow-hidden relative">

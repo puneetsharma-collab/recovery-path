@@ -39,6 +39,9 @@ export default function Checkin() {
     const savedPass = localStorage.getItem('recovery_password');
     if (savedId && savedPass) {
       handleAuth(savedId, savedPass, true);
+    } else {
+      // If no credentials, redirect to home to login
+      window.location.href = '/';
     }
   }, []);
 
@@ -305,29 +308,10 @@ export default function Checkin() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex justify-center p-4 py-12">
-      <div className="bg-white rounded-[40px] shadow-2xl p-10 max-w-md w-full space-y-6">
-        <h1 className="text-center text-4xl font-black text-slate-900">{isLogin ? 'Welcome Back' : 'New Path'}</h1>
-        <div className="space-y-4">
-          <input
-            placeholder="User ID"
-            className="w-full bg-slate-50 border-2 border-slate-100 p-5 rounded-3xl font-bold text-slate-900 outline-none focus:border-blue-400"
-            onChange={(e) => setUserId(e.target.value.toLowerCase())}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full bg-slate-50 border-2 border-slate-100 p-5 rounded-3xl font-bold text-slate-900 outline-none focus:border-blue-400"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button onClick={() => handleAuth(userId, password)} className="w-full bg-blue-600 text-white py-5 rounded-3xl font-black text-xl shadow-lg">
-            {isLogin ? 'Login' : 'Create Identity'}
-          </button>
-          <button onClick={() => setIsLogin(!isLogin)} className="w-full text-slate-400 font-bold text-sm">
-            {isLogin ? "Create a new ID" : "Already have an ID?"}
-          </button>
-        </div>
-        {msg && <div className="text-center text-sm font-bold text-blue-900 bg-blue-50 p-4 rounded-2xl">{msg}</div>}
+    <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      <div className="animate-pulse flex flex-col items-center space-y-4">
+        <div className="w-12 h-12 bg-blue-200 rounded-full"></div>
+        <p className="text-slate-400 font-bold animate-bounce">Resuming Session...</p>
       </div>
     </main>
   );
