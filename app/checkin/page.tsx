@@ -127,7 +127,7 @@ export default function CheckinPage() {
 
   async function loadData(id: string) {
     const res = await fetch(`/api/checkin?code=${id}`);
-    const  ProgressData = await res.json();
+    const data = await res.json();
 
     setStreak(data.streak || 0);
     setFreezes(data.freezes || 0);
@@ -150,7 +150,7 @@ export default function CheckinPage() {
       }),
     });
 
-    const  ProgressData = await res.json();
+    const data = await res.json();
 
     setStreak(data.streak || 0);
     setFreezes(data.freezes || 0);
@@ -178,7 +178,7 @@ export default function CheckinPage() {
       }),
     });
 
-    const  ProgressData = await res.json();
+    const data = await res.json();
 
     setStreak(data.streak || 0);
     setFreezes(data.freezes || 0);
