@@ -4,10 +4,13 @@ import { Inter } from 'next/font/google';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export const metadata: Metadata = {
-  title: 'The Sacred Yatra',
-  description: 'Your Spiritual Journey to Self-Mastery.',
+export const meta Metadata = {
+  title: 'Sankalpa Journey',
+  description: 'An anonymous recovery journey to help users quit bad habits through daily check-ins, path progression, freeze points, shrines, and healing milestones.',
   openGraph: {
+    title: 'Sankalpa Journey',
+    description:
+      'An anonymous recovery journey to help users quit bad habits through daily check-ins, path progression, freeze points, shrines, and healing milestones.',
     images: [
       {
         url: 'https://bolt.new/static/og_default.png',
@@ -16,6 +19,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
+    title: 'Sankalpa Journey',
+    description:
+      'An anonymous recovery journey to help users quit bad habits through daily check-ins, path progression, freeze points, shrines, and healing milestones.',
     images: [
       {
         url: 'https://bolt.new/static/og_default.png',
