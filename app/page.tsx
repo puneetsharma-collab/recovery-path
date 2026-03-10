@@ -146,19 +146,6 @@ export default function Home() {
         
         {/* WELCOME HERO SECTION */}
         <div className="space-y-6 text-center animate-in slide-in-from-top-4 duration-700">
-          <h1 className="text-4xl md:text-5xl font-serif text-slate-800 leading-tight">
-            Welcome to Your<br /><span className="text-5xl md:text-6xl">Sankalpa</span><br />Journey
-          </h1>
-          
-          {/* HERO IMAGE */}
-          <div className="rounded-3xl overflow-hidden shadow-xl animate-in zoom-in-95 duration-1000">
-            <img 
-              src="/sankalpa-hero.jpeg" 
-              alt="Sankalpa Journey" 
-              className="w-full h-auto object-cover"
-            />
-          </div>
-
           {/* TAGLINE */}
           <p className="text-lg md:text-xl text-slate-700 font-medium leading-relaxed">
             Identify your resolve and walk toward peace.

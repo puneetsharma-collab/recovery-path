@@ -689,9 +689,6 @@ video {
 .h-96 {
   height: 24rem;
 }
-.h-auto {
-  height: auto;
-}
 .max-h-\[500px\] {
   max-height: 500px;
 }
@@ -1206,10 +1203,6 @@ video {
 .to-yellow-500 {
   --tw-gradient-to: #eab308 var(--tw-gradient-to-position);
 }
-.object-cover {
-  -o-object-fit: cover;
-     object-fit: cover;
-}
 .p-10 {
   padding: 2.5rem;
 }
@@ -1498,10 +1491,6 @@ video {
 .text-slate-700 {
   --tw-text-opacity: 1;
   color: rgb(51 65 85 / var(--tw-text-opacity, 1));
-}
-.text-slate-800 {
-  --tw-text-opacity: 1;
-  color: rgb(45 45 45 / var(--tw-text-opacity, 1));
 }
 .text-slate-900 {
   --tw-text-opacity: 1;
@@ -1852,16 +1841,6 @@ body {
   .md\:py-12 {
     padding-top: 3rem;
     padding-bottom: 3rem;
-  }
-
-  .md\:text-5xl {
-    font-size: 3rem;
-    line-height: 1;
-  }
-
-  .md\:text-6xl {
-    font-size: 3.75rem;
-    line-height: 1;
   }
 
   .md\:text-xl {
