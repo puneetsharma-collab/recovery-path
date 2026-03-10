@@ -1,13 +1,14 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { Sun, Cloud, CloudRain, ArrowLeft, Sparkles } from 'lucide-react';
 
 const MOTIVATION = [
-  "One day at a time. You're doing amazing! ✨",
-  "Every moment is a fresh start. Proud of you. 💙",
-  "Your future self is thanking you right now. 🏃‍♂️",
-  "Strength doesn't come from what you can do; it comes from overcoming things you once thought you couldn't. 💪",
-  "Progress, not perfection. Keep walking the path. 🌱"
+  "The sun rises on a new beginning. Your mind is your temple. ✨",
+  "Every breath is a chance to return to the path. Proud of you. 💙",
+  "Your future self is walking this path with you. 🏃‍♂️",
+  "Strength is found in the stillness of the storm. 💪",
+  "The path is long, but every step is sacred. 🌱"
 ];
 
 interface DiaryEntry {
@@ -19,20 +20,18 @@ interface DiaryEntry {
 export default function Checkin() {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
-  const [isLogin, setIsLogin] = useState(false);
-  const [checkins, setCheckins] = useState<string[]>([]);
-  const [slips, setSlips] = useState<string[]>([]);
-  const [freezesUsed, setFreezesUsed] = useState<string[]>([]);
-  const [diaryEntries, setDiaryEntries] = useState<DiaryEntry[]>([]);
-  const [streak, setStreak] = useState(0);
-  const [freezes, setFreezes] = useState(0);
-  const [msg, setMsg] = useState('');
-  const [quote, setQuote] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showDiaryForm, setShowDiaryForm] = useState(false);
   const [resistanceLevel, setResistanceLevel] = useState(5);
   const [diaryNotes, setDiaryNotes] = useState('');
-  const [activeTab, setActiveTab] = useState<'checkin' | 'report'>('checkin');
+  const [streak, setStreak] = useState(0);
+  const [freezes, setFreezes] = useState(0);
+  const [msg, setMsg] = useState('');
+  const [quote, setQuote] = useState('');
+  const [checkins, setCheckins] = useState<string[]>([]);
+  const [slips, setSlips] = useState<string[]>([]);
+  const [freezesUsed, setFreezesUsed] = useState<string[]>([]);
+  const [selectedState, setSelectedState] = useState<'Steady' | 'Flickering' | 'Clouded' | null>(null);
 
   useEffect(() => {
     const savedId = localStorage.getItem('recovery_user_id');
@@ -40,7 +39,6 @@ export default function Checkin() {
     if (savedId && savedPass) {
       handleAuth(savedId, savedPass, true);
     } else {
-      // If no credentials, redirect to home to login
       window.location.href = '/';
     }
   }, []);
@@ -54,13 +52,14 @@ export default function Checkin() {
     const data = await res.json();
     if (data.error) {
       setMsg(data.error);
-      if (auto) logout();
+      if (auto) {
+        localStorage.clear();
+        window.location.href = '/';
+      }
     } else {
       setUserId(data.userId);
       setPassword(pass);
       setIsLoggedIn(true);
-      localStorage.setItem('recovery_user_id', data.userId);
-      localStorage.setItem('recovery_password', pass);
       loadData(data.userId);
     }
   }
@@ -71,40 +70,26 @@ export default function Checkin() {
     setCheckins(data.checkins || []);
     setSlips(data.slips || []);
     setFreezesUsed(data.freezesUsed || []);
-    setDiaryEntries(data.diaryEntries || []);
     setStreak(data.streak || 0);
     setFreezes(data.freezes || 0);
   }
 
-  async function doCheckin(action: 'strong' | 'slip') {
-    if (action === 'strong') {
+  async function doCheckin(state: 'Steady' | 'Flickering' | 'Clouded') {
+    setSelectedState(state);
+    if (state === 'Steady' || state === 'Flickering') {
       setShowDiaryForm(true);
-      return;
-    }
-    
-    const res = await fetch('/api/checkin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: userId, action })
-    });
-    const data = await res.json();
-    if (data.error) {
-      setMsg(data.error);
     } else {
-      setCheckins(data.checkins || []);
-      setSlips(data.slips || []);
-      setFreezesUsed(data.freezesUsed || []);
-      setDiaryEntries(data.diaryEntries || []);
-      setStreak(data.streak || 0);
-      setFreezes(data.freezes || 0);
-      const usedFreezes = (data.freezesUsed || []).length;
-      const earnedFreezes = data.freezes || 0;
-      if (usedFreezes < earnedFreezes) {
-        setMsg("You used a freeze! Your streak is safe. 🛡️");
-        setQuote("Your consistency has rewards. Keep pushing!");
-      } else {
-        setMsg("It's okay. Tomorrow is a new start. 🫂");
-        setQuote("Failure is just a bruise, not a tattoo. Rest, and restart.");
+      const res = await fetch('/api/checkin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: userId, action: 'slip' })
+      });
+      const data = await res.json();
+      if (!data.error) {
+        setStreak(data.streak || 0);
+        setFreezes(data.freezes || 0);
+        setMsg("The path is still there. Tomorrow is a new ascent. 🫂");
+        setQuote("Failure is just a detour, not the end of the journey.");
       }
     }
   }
@@ -113,207 +98,144 @@ export default function Checkin() {
     const res = await fetch('/api/checkin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: userId, action: 'strong', resistanceLevel, notes: diaryNotes })
+      body: JSON.stringify({ 
+        code: userId, 
+        action: 'strong', 
+        resistanceLevel, 
+        notes: diaryNotes 
+      })
     });
     const data = await res.json();
-    if (data.error) {
-      setMsg(data.error);
-    } else {
+    if (!data.error) {
       setCheckins(data.checkins || []);
-      setSlips(data.slips || []);
-      setFreezesUsed(data.freezesUsed || []);
-      setDiaryEntries(data.diaryEntries || []);
       setStreak(data.streak || 0);
       setFreezes(data.freezes || 0);
-      setMsg('Success saved! 💙');
+      setMsg('Your reflection is recorded. 💙');
       setQuote(MOTIVATION[Math.floor(Math.random() * MOTIVATION.length)]);
       setShowDiaryForm(false);
-      setResistanceLevel(5);
       setDiaryNotes('');
     }
   }
 
-  function logout() {
-    localStorage.clear();
-    window.location.reload();
-  }
+  if (!isLoggedIn) return null;
 
-  // Calendar Logic
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const firstDay = new Date(year, month, 1).getDay();
-  
-  const calendarDays = [];
-  for (let i = 0; i < firstDay; i++) calendarDays.push(null);
-  for (let i = 1; i <= daysInMonth; i++) calendarDays.push(i);
-
-  if (isLoggedIn) {
-    return (
-      <main className="min-h-screen bg-[#F8FAFC] flex justify-center p-4 py-8 md:py-12">
-        <div className="bg-white rounded-[32px] shadow-sm p-8 md:p-10 max-w-md w-full space-y-8 border border-slate-100">
-          <div className="text-center space-y-2">
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight">Journey Check-in</h1>
-            <p className="text-sm text-slate-500 font-medium">Be honest with your path, @{userId}.</p>
+  return (
+    <main className="min-h-screen bg-gradient-to-b from-[#FFEDD5] via-[#FFFBEB] to-[#F8FAFC] flex justify-center p-4 py-8 md:py-12">
+      <div className="bg-white/80 backdrop-blur-md rounded-[40px] shadow-xl shadow-orange-200/20 p-8 md:p-12 max-w-md w-full space-y-10 border border-orange-100/50 relative overflow-hidden">
+        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-40 h-40 bg-orange-100/30 rounded-full blur-3xl"></div>
+        
+        <div className="text-center space-y-4 relative z-10">
+          <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-yellow-400 rounded-2xl flex items-center justify-center text-white mx-auto shadow-lg shadow-orange-200">
+            <Sun size={32} className="animate-pulse" />
           </div>
-
-          <div className="space-y-4">
-            <button 
-              onClick={() => doCheckin('strong')} 
-              className="w-full bg-saffron hover:bg-[#e68a2e] text-white py-5 rounded-[20px] font-bold text-lg shadow-lg shadow-saffron/10 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
-            >
-              <span>✨</span>
-              I Continued My Ascent!
-            </button>
-
-            <button 
-              onClick={() => doCheckin('slip')} 
-              className="w-full bg-slate-50 border border-slate-200 text-slate-600 py-4 rounded-[20px] font-bold hover:bg-orange-50 hover:text-orange-600 hover:border-orange-100 transition-all active:scale-[0.98]"
-            >
-              I Took a Detour
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-center">
-              <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Current Ascent</span>
-              <span className="text-3xl font-black text-slate-900">{streak} <span className="text-xs font-bold text-slate-400">steps</span></span>
-            </div>
-            <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-center">
-              <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Protections</span>
-              <div className="flex justify-center gap-1.5 mt-2">
-                {[...Array(2)].map((_, i) => {
-                  const hasFreeze = freezes > i;
-                  const used = freezesUsed.length > i;
-                  return (
-                    <div key={i} className={`text-xl ${!hasFreeze ? 'opacity-10 grayscale' : used ? 'opacity-30' : 'drop-shadow-sm animate-pulse'}`}>
-                      ❄️
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* ACTIVITY MAP */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">Activity Map</h3>
-              <span className="text-[10px] font-black text-slate-900">{new Date(year, month).toLocaleString('default', { month: 'short' })}</span>
-            </div>
-            <div className="grid grid-cols-7 gap-1.5">
-              {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
-                <div key={i} className="text-[8px] font-black text-slate-300 text-center">{d}</div>
-              ))}
-              {calendarDays.map((day, i) => {
-                if (!day) return <div key={`empty-${i}`} />;
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const isStrong = checkins.includes(dateStr);
-                const isSlip = slips.includes(dateStr);
-                const isFrozen = freezesUsed.includes(dateStr);
-                
-                let bgColor = 'bg-slate-50';
-                let dotColor = '';
-                if (isStrong) {
-                  bgColor = 'bg-blue-600 text-white';
-                } else if (isFrozen) {
-                  bgColor = 'bg-cyan-400 text-white';
-                } else if (isSlip) {
-                  bgColor = 'bg-rose-500 text-white';
-                }
-
-                return (
-                  <div key={day} className={`aspect-square flex items-center justify-center rounded-lg text-[10px] font-bold transition-colors ${bgColor} ${!isStrong && !isSlip && !isFrozen ? 'text-slate-400 hover:bg-slate-100' : ''}`}>
-                    {day}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {quote && (
-            <div className="p-5 bg-blue-50/50 rounded-2xl border border-blue-100/50 animate-in fade-in slide-in-from-bottom-2">
-              <p className="text-blue-800 text-sm font-medium italic text-center leading-relaxed">"{quote}"</p>
-            </div>
-          )}
-
-          <div className="pt-4">
-            <Link href="/" className="group w-full bg-slate-900 text-white py-4 rounded-[20px] font-bold hover:bg-slate-800 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
-              <span>←</span>
-              Go Back
-            </Link>
+          <div className="space-y-1">
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Morning Sadhana</h1>
+            <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">How steady is your mind today?</p>
           </div>
         </div>
 
-        {/* DIARY MODAL (Updated) */}
-        {showDiaryForm && (
-          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
-            <div className="bg-white rounded-[32px] shadow-2xl p-8 max-w-md w-full space-y-6 border border-slate-100 animate-in zoom-in-95 duration-300">
-              <h2 className="text-xl font-black text-slate-900">Daily Reflection</h2>
-              
-              <div className="space-y-6">
-                <div>
-                  <div className="flex justify-between items-center mb-3">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Resistance Level</label>
-                    <span className="text-xl font-black text-saffron bg-saffron/5 px-3 py-1 rounded-xl">{resistanceLevel}</span>
-                  </div>
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="10" 
-                    value={resistanceLevel}
-                    onChange={(e) => setResistanceLevel(parseInt(e.target.value))}
-                    className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-saffron"
-                  />
-                  <div className="flex justify-between mt-2">
-                    <span className="text-[10px] font-bold text-slate-300 uppercase">None</span>
-                    <span className="text-[10px] font-bold text-slate-300 uppercase">Extreme</span>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Today's Notes</label>
-                  <textarea 
-                    value={diaryNotes}
-                    onChange={(e) => setDiaryNotes(e.target.value)}
-                    placeholder="How was your day? Any triggers?"
-                    className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl font-medium text-slate-900 outline-none focus:border-blue-400 focus:bg-white transition-all resize-none h-32 text-sm"
-                  />
-                </div>
+        <div className="space-y-4 relative z-10">
+          <button 
+            onClick={() => doCheckin('Steady')} 
+            className="w-full bg-white hover:bg-emerald-50 border-2 border-slate-100 hover:border-emerald-200 p-6 rounded-[24px] font-bold text-lg transition-all active:scale-[0.98] flex items-center justify-between group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600">
+                <Sparkles size={20} />
               </div>
-
-              <div className="flex gap-3">
-                <button 
-                  onClick={() => {
-                    setShowDiaryForm(false);
-                    setUrgeLevel(5);
-                    setDiaryNotes('');
-                  }}
-                  className="flex-1 bg-slate-50 text-slate-500 py-3.5 rounded-xl font-bold hover:bg-slate-100 transition-all"
-                >
-                  Cancel
-                </button>
-                <button 
-                  onClick={submitDiary}
-                  className="flex-1 bg-saffron hover:bg-[#e68a2e] text-white py-3.5 rounded-xl font-bold shadow-lg shadow-saffron/10 transition-all"
-                >
-                  Save Entry
-                </button>
-              </div>
+              <span className="text-slate-700">Steady</span>
             </div>
+            <span className="text-slate-300 group-hover:text-emerald-400 transition-colors">→</span>
+          </button>
+
+          <button 
+            onClick={() => doCheckin('Flickering')} 
+            className="w-full bg-white hover:bg-orange-50 border-2 border-slate-100 hover:border-orange-200 p-6 rounded-[24px] font-bold text-lg transition-all active:scale-[0.98] flex items-center justify-between group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600">
+                <Cloud size={20} />
+              </div>
+              <span className="text-slate-700">Flickering</span>
+            </div>
+            <span className="text-slate-300 group-hover:text-orange-400 transition-colors">→</span>
+          </button>
+
+          <button 
+            onClick={() => doCheckin('Clouded')} 
+            className="w-full bg-white hover:bg-rose-50 border-2 border-slate-100 hover:border-rose-200 p-6 rounded-[24px] font-bold text-lg transition-all active:scale-[0.98] flex items-center justify-between group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center text-rose-600">
+                <CloudRain size={20} />
+              </div>
+              <span className="text-slate-700">Clouded</span>
+            </div>
+            <span className="text-slate-300 group-hover:text-rose-400 transition-colors">→</span>
+          </button>
+        </div>
+
+        {msg && (
+          <div className="p-6 bg-white/50 rounded-3xl border border-slate-100 text-center space-y-2 animate-in fade-in slide-in-from-bottom-2">
+            <p className="text-slate-900 font-bold">{msg}</p>
+            {quote && <p className="text-xs text-slate-500 italic">"{quote}"</p>}
           </div>
         )}
-      </main>
-    );
-  }
 
-  return (
-    <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <div className="animate-pulse flex flex-col items-center space-y-4">
-        <div className="w-12 h-12 bg-blue-200 rounded-full"></div>
-        <p className="text-slate-400 font-bold animate-bounce">Resuming Session...</p>
+        <div className="pt-4 flex gap-4">
+          <Link href="/dashboard" className="flex-1 bg-slate-900 text-white py-5 rounded-[24px] font-bold hover:bg-slate-800 transition-all text-center flex items-center justify-center gap-2">
+            <ArrowLeft size={18} />
+            Dashboard
+          </Link>
+        </div>
       </div>
+
+      {showDiaryForm && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-[40px] shadow-2xl p-10 max-w-md w-full space-y-8 border border-slate-100 animate-in zoom-in-95 duration-300">
+            <h2 className="text-2xl font-black text-slate-900">Today's Reflection</h2>
+            
+            <div className="space-y-6">
+              <div>
+                <div className="flex justify-between items-center mb-4">
+                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Mind Presence</label>
+                  <span className="text-lg font-black text-orange-500 bg-orange-50 px-4 py-1 rounded-full">{resistanceLevel}/10</span>
+                </div>
+                <input 
+                  type="range" min="0" max="10" value={resistanceLevel}
+                  onChange={(e) => setResistanceLevel(parseInt(e.target.value))}
+                  className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-orange-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Traveler's Journal</label>
+                <textarea 
+                  value={diaryNotes}
+                  onChange={(e) => setDiaryNotes(e.target.value)}
+                  placeholder="Record your thoughts on today's journey..."
+                  className="w-full bg-[#F5F5DC]/30 border border-slate-100 p-6 rounded-3xl font-medium text-slate-900 outline-none focus:border-orange-300 transition-all resize-none h-40 text-sm"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <button 
+                onClick={() => setShowDiaryForm(false)}
+                className="flex-1 bg-slate-50 text-slate-500 py-4 rounded-2xl font-bold hover:bg-slate-100 transition-all"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={submitDiary}
+                className="flex-1 bg-gradient-to-r from-orange-500 to-yellow-500 text-white py-4 rounded-2xl font-bold shadow-lg shadow-orange-200 transition-all active:scale-95"
+              >
+                Save Ritual
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
