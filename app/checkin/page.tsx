@@ -12,7 +12,7 @@ const MOTIVATION = [
 
 interface DiaryEntry {
   date: string;
-  urgeLevel: number;
+  resistanceLevel: number;
   notes: string;
 }
 
@@ -30,7 +30,7 @@ export default function Checkin() {
   const [quote, setQuote] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showDiaryForm, setShowDiaryForm] = useState(false);
-  const [urgeLevel, setUrgeLevel] = useState(5);
+  const [resistanceLevel, setResistanceLevel] = useState(5);
   const [diaryNotes, setDiaryNotes] = useState('');
   const [activeTab, setActiveTab] = useState<'checkin' | 'report'>('checkin');
 
@@ -113,7 +113,7 @@ export default function Checkin() {
     const res = await fetch('/api/checkin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: userId, action: 'strong', urgeLevel, notes: diaryNotes })
+      body: JSON.stringify({ code: userId, action: 'strong', resistanceLevel, notes: diaryNotes })
     });
     const data = await res.json();
     if (data.error) {
@@ -128,7 +128,7 @@ export default function Checkin() {
       setMsg('Success saved! 💙');
       setQuote(MOTIVATION[Math.floor(Math.random() * MOTIVATION.length)]);
       setShowDiaryForm(false);
-      setUrgeLevel(5);
+      setResistanceLevel(5);
       setDiaryNotes('');
     }
   }
@@ -154,34 +154,34 @@ export default function Checkin() {
       <main className="min-h-screen bg-[#F8FAFC] flex justify-center p-4 py-8 md:py-12">
         <div className="bg-white rounded-[32px] shadow-sm p-8 md:p-10 max-w-md w-full space-y-8 border border-slate-100">
           <div className="text-center space-y-2">
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight">Daily Check-in</h1>
-            <p className="text-sm text-slate-500 font-medium">Be honest with yourself, @{userId}.</p>
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight">Journey Check-in</h1>
+            <p className="text-sm text-slate-500 font-medium">Be honest with your path, @{userId}.</p>
           </div>
 
           <div className="space-y-4">
             <button 
               onClick={() => doCheckin('strong')} 
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-5 rounded-[20px] font-bold text-lg shadow-lg shadow-blue-100 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+              className="w-full bg-saffron hover:bg-[#e68a2e] text-white py-5 rounded-[20px] font-bold text-lg shadow-lg shadow-saffron/10 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
             >
               <span>✨</span>
-              I Stayed Strong!
+              I Continued My Ascent!
             </button>
 
             <button 
               onClick={() => doCheckin('slip')} 
-              className="w-full bg-slate-50 border border-slate-200 text-slate-600 py-4 rounded-[20px] font-bold hover:bg-rose-50 hover:text-rose-600 hover:border-rose-100 transition-all active:scale-[0.98]"
+              className="w-full bg-slate-50 border border-slate-200 text-slate-600 py-4 rounded-[20px] font-bold hover:bg-orange-50 hover:text-orange-600 hover:border-orange-100 transition-all active:scale-[0.98]"
             >
-              I Slipped / I'm Struggling
+              I Took a Detour
             </button>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-center">
-              <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Streak</span>
-              <span className="text-3xl font-black text-slate-900">{streak} <span className="text-xs font-bold text-slate-400">days</span></span>
+              <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Current Ascent</span>
+              <span className="text-3xl font-black text-slate-900">{streak} <span className="text-xs font-bold text-slate-400">steps</span></span>
             </div>
             <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-center">
-              <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Freezes</span>
+              <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Protections</span>
               <div className="flex justify-center gap-1.5 mt-2">
                 {[...Array(2)].map((_, i) => {
                   const hasFreeze = freezes > i;
@@ -255,16 +255,16 @@ export default function Checkin() {
               <div className="space-y-6">
                 <div>
                   <div className="flex justify-between items-center mb-3">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Urge Intensity</label>
-                    <span className="text-xl font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-xl">{urgeLevel}</span>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Resistance Level</label>
+                    <span className="text-xl font-black text-saffron bg-saffron/5 px-3 py-1 rounded-xl">{resistanceLevel}</span>
                   </div>
                   <input 
                     type="range" 
                     min="0" 
                     max="10" 
-                    value={urgeLevel}
-                    onChange={(e) => setUrgeLevel(parseInt(e.target.value))}
-                    className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                    value={resistanceLevel}
+                    onChange={(e) => setResistanceLevel(parseInt(e.target.value))}
+                    className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-saffron"
                   />
                   <div className="flex justify-between mt-2">
                     <span className="text-[10px] font-bold text-slate-300 uppercase">None</span>
@@ -296,7 +296,7 @@ export default function Checkin() {
                 </button>
                 <button 
                   onClick={submitDiary}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-blue-100 transition-all"
+                  className="flex-1 bg-saffron hover:bg-[#e68a2e] text-white py-3.5 rounded-xl font-bold shadow-lg shadow-saffron/10 transition-all"
                 >
                   Save Entry
                 </button>

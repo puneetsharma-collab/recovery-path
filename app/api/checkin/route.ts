@@ -59,7 +59,7 @@ export async function GET(req: Request) {
 
 // 2. THIS PART HANDLES SAVING A NEW "STAYED STRONG" OR "SLIP" DAY
 export async function POST(req: Request) {
-  const { code, action, urgeLevel, notes } = await req.json(); // action: 'strong' | 'slip'
+  const { code, action, resistanceLevel, notes } = await req.json(); // action: 'strong' | 'slip'
   const filePath = path.join(process.cwd(), 'data.json');
 
   const fileData = fs.readFileSync(filePath, 'utf8');
@@ -84,13 +84,13 @@ export async function POST(req: Request) {
     }
     
     // Save diary entry if provided
-    if (urgeLevel !== undefined || notes) {
+    if (resistanceLevel !== undefined || notes) {
       // Remove any existing entry for today
       db[code].diaryEntries = db[code].diaryEntries.filter((d: any) => d.date !== today);
       // Add new entry
       db[code].diaryEntries.push({
         date: today,
-        urgeLevel: urgeLevel || 0,
+        resistanceLevel: resistanceLevel || 0,
         notes: notes || ''
       });
     }

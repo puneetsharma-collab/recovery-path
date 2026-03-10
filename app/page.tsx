@@ -6,7 +6,7 @@ import { Mountain, User, Lock, ArrowRight, Sparkles, Pencil, AlertCircle } from 
 
 interface DiaryEntry {
   date: string;
-  urgeLevel: number;
+  resistanceLevel: number;
   notes: string;
 }
 
@@ -196,9 +196,9 @@ export default function Home() {
                   </Link>
 
                   <Link href="/panic">
-                    <button className="w-full bg-rose-50 border border-rose-100 text-rose-600 hover:bg-rose-100 transition-all p-5 rounded-[20px] font-bold text-sm active:scale-[0.98] flex flex-col items-center gap-2">
+                    <button className="w-full bg-orange-50 border border-orange-100 text-orange-600 hover:bg-orange-100 transition-all p-5 rounded-[20px] font-bold text-sm active:scale-[0.98] flex flex-col items-center gap-2">
                       <AlertCircle size={24} />
-                      <span>SOS Mode</span>
+                      <span>Dharamshala</span>
                     </button>
                   </Link>
                 </div>
@@ -229,32 +229,32 @@ export default function Home() {
                 <div className="bg-emerald-50/50 p-6 rounded-2xl border border-emerald-100/50">
                   <div className="flex items-center gap-2 mb-1">
                     <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                    <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Pure Days</p>
+                    <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Steps Climbed!</p>
                   </div>
                   <p className="text-3xl font-black text-slate-900">{checkins.length}</p>
                 </div>
                 <div className="bg-saffron/5 p-6 rounded-2xl border border-saffron/10">
                   <div className="flex items-center gap-2 mb-1">
                     <div className="w-1.5 h-1.5 bg-saffron rounded-full"></div>
-                    <p className="text-[10px] font-bold text-saffron uppercase tracking-widest">Ascent Streak</p>
+                    <p className="text-[10px] font-bold text-saffron uppercase tracking-widest">Current Ascent</p>
                   </div>
                   <p className="text-3xl font-black text-slate-900">{streak} <span className="text-xs font-bold text-slate-400">steps</span></p>
                 </div>
-                <div className="bg-rose-50/50 p-6 rounded-2xl border border-rose-100/50">
+                <div className="bg-orange-50/50 p-6 rounded-2xl border border-orange-100/50">
                   <div className="flex items-center gap-2 mb-1">
-                    <div className="w-1.5 h-1.5 bg-rose-500 rounded-full"></div>
-                    <p className="text-[10px] font-bold text-rose-600 uppercase tracking-widest">Detours</p>
+                    <div className="w-1.5 h-1.5 bg-orange-500 rounded-full"></div>
+                    <p className="text-[10px] font-bold text-orange-600 uppercase tracking-widest">Detours Taken</p>
                   </div>
                   <p className="text-3xl font-black text-slate-900">{slips.length}</p>
                 </div>
-                <div className="bg-gold/5 p-6 rounded-2xl border border-gold/10">
+                <div className="bg-blue-50/50 p-6 rounded-2xl border border-blue-100/50">
                   <div className="flex items-center gap-2 mb-1">
-                    <div className="w-1.5 h-1.5 bg-gold rounded-full"></div>
-                    <p className="text-[10px] font-bold text-gold-deep uppercase tracking-widest">Mindfulness</p>
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Mindful Resistance</p>
                   </div>
                   <p className="text-3xl font-black text-slate-900">
                     {diaryEntries.length > 0 
-                      ? (diaryEntries.reduce((sum, e) => sum + e.urgeLevel, 0) / diaryEntries.length).toFixed(1) 
+                      ? (diaryEntries.reduce((sum, e) => sum + (e.resistanceLevel || 0), 0) / diaryEntries.length).toFixed(1) 
                       : '0.0'}
                   </p>
                 </div>
@@ -268,7 +268,7 @@ export default function Home() {
                       <div key={idx} className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-1">
                         <div className="flex justify-between items-center mb-1">
                           <p className="text-[10px] font-bold text-slate-400">{new Date(entry.date).toLocaleDateString()}</p>
-                          <span className="text-[10px] font-bold text-saffron px-2 py-0.5 bg-saffron/5 rounded-full">Presence: {entry.urgeLevel}/10</span>
+                          <span className="text-[10px] font-bold text-saffron px-2 py-0.5 bg-saffron/5 rounded-full">Resistance: {entry.resistanceLevel}/10</span>
                         </div>
                         {entry.notes && <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed italic">"{entry.notes}"</p>}
                       </div>

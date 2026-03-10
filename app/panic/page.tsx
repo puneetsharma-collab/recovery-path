@@ -84,29 +84,29 @@ export default function PanicPage() {
   }
 
   return (
-    <main className="min-h-screen bg-rose-600 flex flex-col items-center justify-center p-6 overflow-hidden relative">
+    <main className="min-h-screen bg-orange-600 flex flex-col items-center justify-center p-6 overflow-hidden relative">
       {/* Background blobs for modern feel */}
-      <div className="absolute top-0 left-0 w-64 h-64 bg-rose-500 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 opacity-50"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-rose-700 rounded-full blur-[120px] translate-x-1/2 translate-y-1/2 opacity-50"></div>
+      <div className="absolute top-0 left-0 w-64 h-64 bg-orange-500 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 opacity-50"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-orange-700 rounded-full blur-[120px] translate-x-1/2 translate-y-1/2 opacity-50"></div>
 
       <div className="max-w-md w-full bg-white/10 backdrop-blur-xl rounded-[40px] border border-white/20 p-8 md:p-12 text-center space-y-10 relative z-10 shadow-2xl animate-in fade-in zoom-in-95 duration-700">
         <div className="space-y-4">
-          <div className="w-24 h-24 bg-white/20 rounded-full mx-auto flex items-center justify-center animate-pulse shadow-2xl shadow-rose-900/20">
+          <div className="w-24 h-24 bg-white/20 rounded-full mx-auto flex items-center justify-center animate-pulse shadow-2xl shadow-orange-900/20">
             <span className="text-5xl">🧘</span>
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tight">Breathe.</h1>
-          <p className="text-rose-100 font-medium leading-relaxed">
-            This feeling is temporary. You have survived every urge you've ever had. You will survive this one too.
+          <h1 className="text-3xl font-black text-white tracking-tight">Dharamshala</h1>
+          <p className="text-orange-100 font-medium leading-relaxed">
+            Immediate Mindfulness! This feeling is temporary. You have survived every urge you've ever had. You will survive this one too.
           </p>
         </div>
 
         <div className="space-y-6">
           <div className="space-y-3">
-            <div className="text-[10px] font-bold text-rose-200 uppercase tracking-[0.3em]">Follow the count</div>
+            <div className="text-[10px] font-bold text-orange-200 uppercase tracking-[0.3em]">Follow the count</div>
             <div className="text-8xl font-black text-white tabular-nums transition-all duration-1000">
               {isActive ? phaseSeconds : '—'}
             </div>
-            <div className="text-xl font-bold text-rose-100 uppercase tracking-widest">
+            <div className="text-xl font-bold text-orange-100 uppercase tracking-widest">
               {isActive ? phase : 'Ready?'}
             </div>
           </div>
@@ -116,15 +116,15 @@ export default function PanicPage() {
           {!isActive ? (
             <button 
               onClick={() => setIsActive(true)}
-              className="w-full bg-white text-rose-600 py-5 rounded-[24px] font-black text-lg shadow-xl hover:bg-rose-50 transition-all active:scale-[0.98]"
+              className="w-full bg-white text-orange-600 py-5 rounded-[24px] font-black text-lg shadow-xl hover:bg-orange-50 transition-all active:scale-[0.98]"
             >
-              Start 3-Min Session
+              Ground My Soul
             </button>
           ) : isFinished ? (
             <div className="space-y-4 animate-in fade-in zoom-in duration-700">
-              <p className="text-rose-100 font-bold">The wave has passed. 💙</p>
+              <p className="text-orange-100 font-bold">The wave has passed. 💙</p>
               <Link href="/">
-                <button className="w-full bg-white text-rose-600 py-5 rounded-[24px] font-black text-lg shadow-xl hover:bg-rose-50 transition-all active:scale-[0.98]">
+                <button className="w-full bg-white text-orange-600 py-5 rounded-[24px] font-black text-lg shadow-xl hover:bg-orange-50 transition-all active:scale-[0.98]">
                   Return Home
                 </button>
               </Link>
@@ -133,8 +133,8 @@ export default function PanicPage() {
             <div className="space-y-4">
               <div className="text-2xl font-mono text-white opacity-80">{formatTime(timeLeft)}</div>
               <Link href="/">
-                <button className="text-rose-200 text-xs font-bold uppercase tracking-widest hover:text-white transition-colors">
-                  Exit Emergency Mode
+                <button className="text-orange-200 text-xs font-bold uppercase tracking-widest hover:text-white transition-colors">
+                  Exit Sanctuary
                 </button>
               </Link>
             </div>

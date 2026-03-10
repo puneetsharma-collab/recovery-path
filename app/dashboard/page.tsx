@@ -125,12 +125,20 @@ export default function Dashboard() {
             
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-emerald-50/50 p-6 rounded-[24px] border border-emerald-100/50">
-                <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-1">Pure Days</p>
+                <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-1">Steps Climbed!</p>
                 <p className="text-3xl font-black text-slate-900">{streak}</p>
               </div>
+              <div className="bg-orange-50/50 p-6 rounded-[24px] border border-orange-100/50">
+                <p className="text-[10px] font-bold text-orange-600 uppercase tracking-widest mb-1">Detours Taken</p>
+                <p className="text-3xl font-black text-slate-900">{0}</p>
+              </div>
               <div className="bg-gold/5 p-6 rounded-[24px] border border-gold/10">
-                <p className="text-[10px] font-bold text-gold-deep uppercase tracking-widest mb-1">Vow Status</p>
-                <p className="text-3xl font-black text-slate-900">Active</p>
+                <p className="text-[10px] font-bold text-gold-deep uppercase tracking-widest mb-1">Current Ascent</p>
+                <p className="text-3xl font-black text-slate-900">{streak}</p>
+              </div>
+              <div className="bg-blue-50/50 p-6 rounded-[24px] border border-blue-100/50">
+                <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1">Mindful Resistance</p>
+                <p className="text-3xl font-black text-slate-900">{mood}/5</p>
               </div>
             </div>
           </div>
