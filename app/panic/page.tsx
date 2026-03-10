@@ -1,13 +1,39 @@
 'use client';
-import { useState, useEffect } from 'react';
+
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import {
+  ArrowLeft,
+  Wind,
+  TimerReset,
+  HeartHandshake,
+  Shield,
+} from 'lucide-react';
+
+const TOTAL_TIME = 180;
+
+type BreathPhase = 'Get Ready' | 'Breathe In' | 'Hold' | 'Breathe Out' | 'Finished';
+
+const rescueLines = [
+  'This urge is a wave, not a command.',
+  'You do not need to obey this feeling.',
+  'Delay, breathe, and let the peak pass.',
+  'The body can be loud while the mind stays steady.',
+];
 
 export default function PanicPage() {
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [phase, setPhase] = useState<BreathPhase>('Get Ready');
+  const [phaseSeconds, setPhaseSeconds] = useState(3);
+  const [isActive, setIsActive] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(TOTAL_TIME);
+  const [isFinished, setIsFinished] = useState(false);
+  const [lineIndex, setLineIndex] = useState(0);
 
   useEffect(() => {
     const savedId = localStorage.getItem('recovery_user_id');
     const savedPass = localStorage.getItem('recovery_password');
+
     if (savedId && savedPass) {
       setIsAuthorized(true);
     } else {
@@ -15,49 +41,38 @@ export default function PanicPage() {
     }
   }, []);
 
-  // 1. Breathing States
-  const [phase, setPhase] = useState('Get Ready');
-  const [phaseSeconds, setPhaseSeconds] = useState(3);
-  const [isActive, setIsActive] = useState(false);
-
-  // 2. Total Timer States (3 Minutes = 180 Seconds)
-  const TOTAL_TIME = 180;
-  const [timeLeft, setTimeLeft] = useState(TOTAL_TIME);
-  const [isFinished, setIsFinished] = useState(false);
-
-  // Constants for the Progress Ring
-  const radius = 150; 
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (timeLeft / TOTAL_TIME) * circumference;
-
   useEffect(() => {
     if (!isActive || isFinished) return;
 
     const interval = setInterval(() => {
-      // Global Countdown
       setTimeLeft((prev) => {
         if (prev <= 1) {
           setIsFinished(true);
+          setPhase('Finished');
+          setPhaseSeconds(0);
           return 0;
         }
         return prev - 1;
       });
 
-      // Breathing Phase Logic
       setPhaseSeconds((prev) => {
         if (prev > 1) return prev - 1;
 
-        // Switch Phases
         if (phase === 'Get Ready' || phase === 'Breathe Out') {
           setPhase('Breathe In');
-          return 4; // Inhale for 4s
-        } else if (phase === 'Breathe In') {
-          setPhase('Hold');
-          return 2; // Hold for 2s
-        } else if (phase === 'Hold') {
-          setPhase('Breathe Out');
-          return 6; // Exhale for 6s
+          return 4;
         }
+
+        if (phase === 'Breathe In') {
+          setPhase('Hold');
+          return 2;
+        }
+
+        if (phase === 'Hold') {
+          setPhase('Breathe Out');
+          return 6;
+        }
+
         return prev;
       });
     }, 1000);
@@ -65,80 +80,192 @@ export default function PanicPage() {
     return () => clearInterval(interval);
   }, [isActive, phase, isFinished]);
 
-  // Format time for the display (e.g., 2:59)
-  const formatTime = (seconds: number) => {
+  useEffect(() => {
+    if (!isActive || isFinished) return;
+
+    const quoteInterval = setInterval(() => {
+      setLineIndex((prev) => (prev + 1) % rescueLines.length);
+    }, 6000);
+
+    return () => clearInterval(quoteInterval);
+  }, [isActive, isFinished]);
+
+  const progress = useMemo(() => {
+    return ((TOTAL_TIME - timeLeft) / TOTAL_TIME) * 100;
+  }, [timeLeft]);
+
+  function formatTime(seconds: number) {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-  };
-
-  if (!isAuthorized) {
-    return (
-      <main className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
-        <div className="animate-pulse flex flex-col items-center space-y-4">
-          <div className="w-12 h-12 bg-blue-900 rounded-full"></div>
-          <p className="text-blue-500 font-bold animate-bounce">Resuming Session...</p>
-        </div>
-      </main>
-    );
   }
 
+  function resetSession() {
+    setPhase('Get Ready');
+    setPhaseSeconds(3);
+    setIsActive(false);
+    setTimeLeft(TOTAL_TIME);
+    setIsFinished(false);
+    setLineIndex(0);
+  }
+
+  if (!isAuthorized) return null;
+
   return (
-    <main className="min-h-screen bg-orange-600 flex flex-col items-center justify-center p-6 overflow-hidden relative">
-      {/* Background blobs for modern feel */}
-      <div className="absolute top-0 left-0 w-64 h-64 bg-orange-500 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 opacity-50"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-orange-700 rounded-full blur-[120px] translate-x-1/2 translate-y-1/2 opacity-50"></div>
+    <main className="min-h-screen bg-gradient-to-b from-[#FFEEDB] via-[#FFF7EC] to-[#EEF9FB] p-4 py-8">
+      <div className="max-w-md mx-auto space-y-6">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/"
+            className="w-11 h-11 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center text-slate-500"
+          >
+            <ArrowLeft size={18} />
+          </Link>
 
-      <div className="max-w-md w-full bg-white/10 backdrop-blur-xl rounded-[40px] border border-white/20 p-8 md:p-12 text-center space-y-10 relative z-10 shadow-2xl animate-in fade-in zoom-in-95 duration-700">
-        <div className="space-y-4">
-          <div className="w-24 h-24 bg-white/20 rounded-full mx-auto flex items-center justify-center animate-pulse shadow-2xl shadow-orange-900/20">
-            <span className="text-5xl">🧘</span>
+          <div className="bg-white border border-slate-100 rounded-2xl px-4 py-3 shadow-sm flex-1">
+            <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400">
+              Urge rescue
+            </p>
+            <p className="text-sm font-black text-slate-900">
+              Stay here until the wave drops
+            </p>
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tight">Ground Your Soul</h1>
-          <p className="text-orange-100 font-medium leading-relaxed">
-            Immediate Mindfulness! This feeling is temporary. You have survived every urge you've ever had. You will survive this one too.
-          </p>
         </div>
 
-        <div className="space-y-6">
+        <div className="bg-white/85 backdrop-blur rounded-[36px] border border-white shadow-xl p-6 space-y-6">
+          <div className="text-center space-y-3">
+            <div className="w-20 h-20 rounded-3xl bg-orange-100 text-orange-500 flex items-center justify-center mx-auto shadow-sm">
+              <Wind size={34} />
+            </div>
+
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-orange-600">
+              Emergency support
+            </p>
+
+            <h1 className="text-3xl font-black text-slate-900">
+              Ride the urge, don’t act on it
+            </h1>
+
+            <p className="text-slate-600">
+              Breathe with the timer and let your nervous system settle before you decide anything.
+            </p>
+          </div>
+
+          <div className="bg-[#FFF8EE] border border-orange-100 rounded-[28px] p-5 space-y-5">
+            <div className="w-full bg-orange-100 rounded-full h-3 overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-orange-400 to-amber-400 transition-all duration-1000"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+
+            <div className="text-center space-y-2">
+              <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-slate-400">
+                Current phase
+              </p>
+              <h2 className="text-2xl font-black text-slate-900">
+                {isFinished ? 'Completed' : isActive ? phase : 'Ready'}
+              </h2>
+              <div className="text-7xl font-black text-orange-500 tabular-nums">
+                {isFinished ? '✓' : isActive ? phaseSeconds : '—'}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-white border border-slate-100 rounded-2xl p-4 text-center">
+                <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">
+                  Session time
+                </p>
+                <p className="text-2xl font-black text-slate-900 mt-1">
+                  {formatTime(timeLeft)}
+                </p>
+              </div>
+
+              <div className="bg-white border border-slate-100 rounded-2xl p-4 text-center">
+                <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">
+                  Pattern
+                </p>
+                <p className="text-2xl font-black text-slate-900 mt-1">
+                  4-2-6
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-white border border-slate-100 rounded-2xl p-4 text-center min-h-[88px] flex items-center justify-center">
+              <p className="text-sm font-semibold text-slate-700">
+                {isFinished
+                  ? 'Good. The wave passed without control over you.'
+                  : rescueLines[lineIndex]}
+              </p>
+            </div>
+          </div>
+
           <div className="space-y-3">
-            <div className="text-[10px] font-bold text-orange-200 uppercase tracking-[0.3em]">Follow the count</div>
-            <div className="text-8xl font-black text-white tabular-nums transition-all duration-1000">
-              {isActive ? phaseSeconds : '—'}
-            </div>
-            <div className="text-xl font-bold text-orange-100 uppercase tracking-widest">
-              {isActive ? phase : 'Ready?'}
-            </div>
+            {!isActive && !isFinished && (
+              <button
+                onClick={() => setIsActive(true)}
+                className="w-full bg-gradient-to-r from-orange-400 to-amber-400 hover:from-orange-500 hover:to-amber-500 text-white py-5 rounded-[24px] font-black text-lg shadow-lg transition-all"
+              >
+                Start Urge Rescue
+              </button>
+            )}
+
+            {isActive && !isFinished && (
+              <button
+                onClick={resetSession}
+                className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-5 rounded-[24px] font-bold text-lg transition-all flex items-center justify-center gap-2"
+              >
+                <TimerReset size={20} />
+                Restart Timer
+              </button>
+            )}
+
+            {isFinished && (
+              <div className="space-y-3">
+                <Link href="/" className="block">
+                  <button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-5 rounded-[24px] font-black text-lg shadow-lg transition-all">
+                    Return to Journey
+                  </button>
+                </Link>
+
+                <button
+                  onClick={resetSession}
+                  className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-5 rounded-[24px] font-bold text-lg transition-all"
+                >
+                  Do Another Round
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="pt-4 space-y-4">
-          {!isActive ? (
-            <button 
-              onClick={() => setIsActive(true)}
-              className="w-full bg-white text-orange-600 py-5 rounded-[24px] font-black text-lg shadow-xl hover:bg-orange-50 transition-all active:scale-[0.98]"
-            >
-              Ground My Soul
-            </button>
-          ) : isFinished ? (
-            <div className="space-y-4 animate-in fade-in zoom-in duration-700">
-              <p className="text-orange-100 font-bold">The wave has passed. 💙</p>
-              <Link href="/">
-                <button className="w-full bg-white text-orange-600 py-5 rounded-[24px] font-black text-lg shadow-xl hover:bg-orange-50 transition-all active:scale-[0.98]">
-                  Return Home
-                </button>
-              </Link>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="bg-white border border-slate-100 rounded-2xl p-4 text-center">
+            <div className="flex justify-center mb-2 text-orange-500">
+              <Shield size={18} />
             </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="text-2xl font-mono text-white opacity-80">{formatTime(timeLeft)}</div>
-              <Link href="/">
-                <button className="text-orange-200 text-xs font-bold uppercase tracking-widest hover:text-white transition-colors">
-                  Exit Sanctuary
-                </button>
-              </Link>
+            <p className="text-xs font-bold text-slate-700 leading-snug">
+              Delay action
+            </p>
+          </div>
+
+          <div className="bg-white border border-slate-100 rounded-2xl p-4 text-center">
+            <div className="flex justify-center mb-2 text-cyan-500">
+              <Wind size={18} />
             </div>
-          )}
+            <p className="text-xs font-bold text-slate-700 leading-snug">
+              Slow the body
+            </p>
+          </div>
+
+          <div className="bg-white border border-slate-100 rounded-2xl p-4 text-center">
+            <div className="flex justify-center mb-2 text-emerald-500">
+              <HeartHandshake size={18} />
+            </div>
+            <p className="text-xs font-bold text-slate-700 leading-snug">
+              Choose again
+            </p>
+          </div>
         </div>
       </div>
     </main>
