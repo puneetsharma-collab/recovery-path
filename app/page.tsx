@@ -141,164 +141,70 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F8F9FA] p-4 py-8 md:py-12">
-      <div className="max-w-4xl mx-auto space-y-8">
+    <main className="min-h-screen bg-gradient-to-b from-blue-100 to-cyan-50 p-4 py-8 md:py-12 flex flex-col items-center justify-center animate-in fade-in duration-1000">
+      <div className="w-full max-w-sm space-y-8">
         
-        {/* HEADER */}
-        <div className="flex justify-between items-center bg-white p-6 rounded-[24px] shadow-sm border border-slate-100">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-saffron rounded-2xl flex items-center justify-center text-white text-xl font-black shadow-lg shadow-saffron/20">
-              {userId.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Pilgrim</h2>
-              <p className="text-lg font-black text-slate-900">@{userId}</p>
-            </div>
+        {/* WELCOME HERO SECTION */}
+        <div className="space-y-6 text-center animate-in slide-in-from-top-4 duration-700">
+          <h1 className="text-4xl md:text-5xl font-serif text-slate-800 leading-tight">
+            Welcome to Your<br /><span className="text-5xl md:text-6xl">Sankalpa</span><br />Journey
+          </h1>
+          
+          {/* HERO IMAGE */}
+          <div className="rounded-3xl overflow-hidden shadow-xl animate-in zoom-in-95 duration-1000">
+            <img 
+              src="/sankalpa-hero.jpeg" 
+              alt="Sankalpa Journey" 
+              className="w-full h-auto object-cover"
+            />
+          </div>
+
+          {/* TAGLINE */}
+          <p className="text-lg md:text-xl text-slate-700 font-medium leading-relaxed">
+            Identify your resolve and walk toward peace.
+          </p>
+
+          {/* CTA BUTTON */}
+          <Link href="/checkin">
+            <button className="w-full bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-600 hover:to-amber-600 text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg shadow-yellow-500/30 active:scale-[0.98] transition-all duration-300 uppercase tracking-widest">
+              Begin My Journey
+            </button>
+          </Link>
+        </div>
+
+        {/* QUICK ACTIONS */}
+        <div className="grid grid-cols-2 gap-4 animate-in slide-in-from-bottom-4 duration-900">
+          <Link href="/test">
+            <button className="w-full bg-white/80 backdrop-blur border border-white shadow-md text-slate-700 hover:bg-white hover:shadow-lg transition-all p-4 rounded-2xl font-bold text-sm active:scale-[0.98] flex flex-col items-center gap-2">
+              <Pencil size={24} className="text-saffron" />
+              <span>Introspection</span>
+            </button>
+          </Link>
+
+          <Link href="/panic">
+            <button className="w-full bg-white/80 backdrop-blur border border-white shadow-md text-orange-600 hover:bg-white hover:shadow-lg transition-all p-4 rounded-2xl font-bold text-sm active:scale-[0.98] flex flex-col items-center gap-2">
+              <AlertCircle size={24} />
+              <span>Ground Your Soul</span>
+            </button>
+          </Link>
+        </div>
+
+        {/* PILGRIM INFO & LOGOUT */}
+        <div className="space-y-3 animate-in slide-in-from-bottom-3 duration-1000">
+          <div className="bg-white/60 backdrop-blur border border-white rounded-2xl p-4 text-center">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">Pilgrim</p>
+            <p className="text-lg font-black text-slate-900">@{userId}</p>
           </div>
           <button 
-            onClick={logout} 
-            className="group flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-rose-50 transition-all"
+            onClick={logout}
+            className="w-full text-slate-400 hover:text-slate-600 font-bold text-xs hover:underline uppercase tracking-widest transition-colors"
           >
-            <span className="text-xs font-bold text-slate-400 group-hover:text-rose-500 uppercase tracking-widest transition-colors">Depart</span>
-            <ArrowRight size={16} className="text-slate-300 group-hover:text-rose-400 transition-colors" />
+            Depart the Journey
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-          
-          {/* ACTION SECTION */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-[32px] shadow-sm border border-slate-100 p-8 space-y-6">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xl font-black text-slate-900">Daily Sadhana</h3>
-                <span className="text-xs font-bold text-saffron bg-saffron/5 px-3 py-1 rounded-full uppercase tracking-wider">Active Path</span>
-              </div>
-              
-              <div className="grid gap-4">
-                <Link href="/checkin">
-                  <button className="w-full bg-saffron hover:bg-[#e68a2e] transition-all text-white px-8 py-5 rounded-[20px] font-bold text-lg shadow-lg shadow-saffron/10 active:scale-[0.98] flex items-center justify-between group">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                        <Sparkles size={24} />
-                      </div>
-                      <span>Spiritual Check-in</span>
-                    </div>
-                    <ArrowRight className="opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0" />
-                  </button>
-                </Link>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <Link href="/test">
-                    <button className="w-full bg-slate-50 border border-slate-200 text-slate-700 hover:border-saffron/20 hover:bg-white transition-all p-5 rounded-[20px] font-bold text-sm active:scale-[0.98] flex flex-col items-center gap-2">
-                      <Pencil size={24} className="text-saffron" />
-                      <span>Introspection</span>
-                    </button>
-                  </Link>
-
-                  <Link href="/panic">
-                    <button className="w-full bg-orange-50 border border-orange-100 text-orange-600 hover:bg-orange-100 transition-all p-5 rounded-[20px] font-bold text-sm active:scale-[0.98] flex flex-col items-center gap-2">
-                      <AlertCircle size={24} />
-                      <span>Ground Your Soul</span>
-                    </button>
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* EDUCATIONAL TIP */}
-            <div className="bg-slate-900 text-white rounded-[32px] p-8 space-y-4 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-saffron/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-saffron/20 transition-colors"></div>
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="w-2 h-2 bg-saffron rounded-full animate-pulse"></span>
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400">The Path of Patience</h4>
-                </div>
-                <p className="text-slate-300 text-sm leading-relaxed">
-                  Cravings are temporary storms on your spiritual ascent. Stay centered for 15 minutes, and the sky will clear. You are the master of your journey.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* REPORT SECTION */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-[32px] shadow-sm border border-slate-100 p-8 space-y-6">
-              <h3 className="text-xl font-black text-slate-900">Your Pilgrimage</h3>
-              
-              <div className="grid grid-cols-3 gap-3">
-                <div className="bg-purple-50 p-4 rounded-xl border border-purple-100 text-center">
-                  <p className="text-[10px] font-bold text-purple-600 uppercase tracking-widest mb-1">Sankalpa Resolution</p>
-                  <p className="text-2xl font-black text-slate-900">{checkins.length}</p>
-                </div>
-                <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 text-center">
-                  <p className="text-[10px] font-bold text-amber-600 uppercase tracking-widest mb-1">Abhyasa Practice</p>
-                  <p className="text-2xl font-black text-slate-900">{streak}</p>
-                </div>
-                <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100 text-center">
-                  <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-1">Dhyana Meditation</p>
-                  <p className="text-2xl font-black text-slate-900">
-                    {diaryEntries.length > 0 
-                      ? (diaryEntries.reduce((sum, e) => sum + (e.resistanceLevel || 0), 0) / diaryEntries.length).toFixed(0) 
-                      : '0'}
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-3 pt-4 border-t border-slate-50">
-                <div className="flex justify-between items-center">
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Progress Calendar</p>
-                  <p className="text-xs font-bold text-saffron">+{slips.length === 0 ? '🔥' : ''}</p>
-                </div>
-                <div className="bg-slate-50 p-4 rounded-2xl">
-                  <div className="grid grid-cols-7 gap-2">
-                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
-                      <div key={idx} className="text-center text-[10px] font-bold text-slate-400 mb-2">{day}</div>
-                    ))}
-                    {Array.from({ length: 35 }).map((_, i) => {
-                      const date = new Date();
-                      date.setDate(date.getDate() - (34 - i));
-                      const dateStr = date.toISOString().split('T')[0];
-                      const isActive = checkins.includes(dateStr);
-                      return (
-                        <div 
-                          key={i}
-                          className={`aspect-square rounded-lg flex items-center justify-center text-sm font-bold transition-all ${
-                            isActive 
-                              ? 'bg-saffron text-white shadow-lg shadow-saffron/20' 
-                              : 'bg-slate-100 text-slate-300 hover:bg-slate-200'
-                          }`}
-                        >
-                          {isActive ? '🕯️' : ''}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-
-              {diaryEntries.length > 0 && (
-                <div className="space-y-4 pt-4 border-t border-slate-50">
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Pilgrim's Reflections</p>
-                  <div className="space-y-3">
-                    {[...diaryEntries].reverse().slice(0, 2).map((entry, idx) => (
-                      <div key={idx} className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-1">
-                        <div className="flex justify-between items-center mb-1">
-                          <p className="text-[10px] font-bold text-slate-400">{new Date(entry.date).toLocaleDateString()}</p>
-                          <span className="text-[10px] font-bold text-saffron px-2 py-0.5 bg-saffron/5 rounded-full">Resistance: {entry.resistanceLevel}/10</span>
-                        </div>
-                        {entry.notes && <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed italic">"{entry.notes}"</p>}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-        </div>
-
         {/* FOOTER */}
-        <div className="text-center opacity-20 text-[10px] font-bold uppercase tracking-[0.4em] py-12">
+        <div className="text-center opacity-40 text-[10px] font-bold uppercase tracking-[0.4em] py-6">
           The Sacred Yatra • Secure & Anonymous
         </div>
 
