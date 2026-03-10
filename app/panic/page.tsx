@@ -84,94 +84,63 @@ export default function PanicPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 overflow-hidden relative">
+    <main className="min-h-screen bg-rose-600 flex flex-col items-center justify-center p-6 overflow-hidden relative">
+      {/* Background blobs for modern feel */}
+      <div className="absolute top-0 left-0 w-64 h-64 bg-rose-500 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 opacity-50"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-rose-700 rounded-full blur-[120px] translate-x-1/2 translate-y-1/2 opacity-50"></div>
 
-      <Link href="/" className="absolute top-10 left-10 text-slate-500 hover:text-white transition-colors z-50 font-bold">
-        ✕ Exit Emergency Mode
-      </Link>
-
-      <div className="text-center space-y-12 max-w-md relative z-10">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-black text-blue-400 tracking-tighter">Emergency Calm</h1>
-          <p className="text-slate-500 text-sm font-medium">Just follow the rhythm. You are safe.</p>
+      <div className="max-w-md w-full bg-white/10 backdrop-blur-xl rounded-[40px] border border-white/20 p-8 md:p-12 text-center space-y-10 relative z-10 shadow-2xl animate-in fade-in zoom-in-95 duration-700">
+        <div className="space-y-4">
+          <div className="w-24 h-24 bg-white/20 rounded-full mx-auto flex items-center justify-center animate-pulse shadow-2xl shadow-rose-900/20">
+            <span className="text-5xl">🧘</span>
+          </div>
+          <h1 className="text-3xl font-black text-white tracking-tight">Breathe.</h1>
+          <p className="text-rose-100 font-medium leading-relaxed">
+            This feeling is temporary. You have survived every urge you've ever had. You will survive this one too.
+          </p>
         </div>
 
-        {/* --- THE PROGRESS & BREATHING CONTAINER --- */}
-        <div className="relative flex items-center justify-center w-80 h-80">
-
-          {/* 1. The Total Progress Ring (SVG) */}
-          <svg className="absolute w-full h-full -rotate-90 pointer-events-none">
-            <circle
-              cx="160"
-              cy="160"
-              r={radius}
-              stroke="currentColor"
-              strokeWidth="4"
-              fill="transparent"
-              className="text-slate-800"
-            />
-            <circle
-              cx="160"
-              cy="160"
-              r={radius}
-              stroke="currentColor"
-              strokeWidth="4"
-              fill="transparent"
-              strokeDasharray={circumference}
-              style={{ 
-                strokeDashoffset: offset,
-                transition: 'stroke-dashoffset 1s linear'
-              }}
-              strokeLinecap="round"
-              className="text-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]"
-            />
-          </svg>
-
-          {/* 2. The Animated Breathing Circle */}
-          <div 
-            className={`rounded-full border-2 border-white/10 flex items-center justify-center transition-all duration-[4000ms] ease-in-out relative z-10
-              ${!isActive ? 'w-32 h-32 bg-blue-600/10' : ''}
-              ${phase === 'Breathe In' ? 'w-64 h-64 bg-blue-500/20' : ''}
-              ${phase === 'Hold' ? 'w-64 h-64 bg-emerald-500/20 border-emerald-400/30' : ''}
-              ${phase === 'Breathe Out' ? 'w-32 h-32 bg-blue-900/20' : ''}
-            `}
-          >
-            <div className="text-center">
-              <p className="text-3xl font-black text-white">{isFinished ? 'Done' : phase}</p>
-              {isActive && !isFinished && (
-                <p className="text-sm font-mono opacity-40 mt-1">{phaseSeconds}s</p>
-              )}
+        <div className="space-y-6">
+          <div className="space-y-3">
+            <div className="text-[10px] font-bold text-rose-200 uppercase tracking-[0.3em]">Follow the count</div>
+            <div className="text-8xl font-black text-white tabular-nums transition-all duration-1000">
+              {isActive ? phaseSeconds : '—'}
+            </div>
+            <div className="text-xl font-bold text-rose-100 uppercase tracking-widest">
+              {isActive ? phase : 'Ready?'}
             </div>
           </div>
         </div>
 
-        {/* --- CONTROLS & INFO --- */}
-        <div className="space-y-6">
+        <div className="pt-4 space-y-4">
           {!isActive ? (
             <button 
               onClick={() => setIsActive(true)}
-              className="bg-blue-600 px-12 py-5 rounded-full font-black text-xl shadow-2xl shadow-blue-500/40 animate-bounce active:scale-95 transition-all"
+              className="w-full bg-white text-rose-600 py-5 rounded-[24px] font-black text-lg shadow-xl hover:bg-rose-50 transition-all active:scale-[0.98]"
             >
               Start 3-Min Session
             </button>
           ) : isFinished ? (
             <div className="space-y-4 animate-in fade-in zoom-in duration-700">
-              <p className="text-emerald-400 font-bold text-xl">Well done. The urge has lost its power. 💙</p>
+              <p className="text-rose-100 font-bold">The wave has passed. 💙</p>
               <Link href="/">
-                <button className="bg-white text-slate-900 px-8 py-3 rounded-2xl font-bold">Return Home</button>
+                <button className="w-full bg-white text-rose-600 py-5 rounded-[24px] font-black text-lg shadow-xl hover:bg-rose-50 transition-all active:scale-[0.98]">
+                  Return Home
+                </button>
               </Link>
             </div>
           ) : (
-            <div className="space-y-2">
-              <p className="text-2xl font-mono text-slate-300">{formatTime(timeLeft)}</p>
-              <p className="text-slate-500 text-xs uppercase tracking-widest font-bold">Time Remaining</p>
+            <div className="space-y-4">
+              <div className="text-2xl font-mono text-white opacity-80">{formatTime(timeLeft)}</div>
+              <Link href="/">
+                <button className="text-rose-200 text-xs font-bold uppercase tracking-widest hover:text-white transition-colors">
+                  Exit Emergency Mode
+                </button>
+              </Link>
             </div>
           )}
         </div>
       </div>
-
-      {/* Subtle Background Glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-900/10 via-transparent to-transparent pointer-events-none" />
     </main>
   );
 }

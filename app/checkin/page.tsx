@@ -151,33 +151,43 @@ export default function Checkin() {
 
   if (isLoggedIn) {
     return (
-      <main className="min-h-screen bg-slate-50 flex justify-center p-4 py-12">
-        <div className="bg-white rounded-[40px] shadow-2xl p-10 max-w-md w-full space-y-8 text-center border border-slate-100">
-          <h1 className="text-3xl font-black text-slate-900">Daily Check-in</h1>
-          <p className="text-slate-500 font-medium">Be honest with yourself, @{userId}.</p>
+      <main className="min-h-screen bg-[#F8FAFC] flex justify-center p-4 py-8 md:py-12">
+        <div className="bg-white rounded-[32px] shadow-sm p-8 md:p-10 max-w-md w-full space-y-8 border border-slate-100">
+          <div className="text-center space-y-2">
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight">Daily Check-in</h1>
+            <p className="text-sm text-slate-500 font-medium">Be honest with yourself, @{userId}.</p>
+          </div>
 
           <div className="space-y-4">
-            <button onClick={() => doCheckin('strong')} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-6 rounded-3xl font-black text-2xl shadow-xl shadow-emerald-100 active:scale-95 transition-all">
+            <button 
+              onClick={() => doCheckin('strong')} 
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-5 rounded-[20px] font-bold text-lg shadow-lg shadow-blue-100 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+            >
+              <span>✨</span>
               I Stayed Strong!
             </button>
 
-            <button onClick={() => doCheckin('slip')} className="w-full bg-rose-50 border-2 border-rose-100 text-rose-600 py-4 rounded-3xl font-bold active:scale-95 transition-all">
+            <button 
+              onClick={() => doCheckin('slip')} 
+              className="w-full bg-slate-50 border border-slate-200 text-slate-600 py-4 rounded-[20px] font-bold hover:bg-rose-50 hover:text-rose-600 hover:border-rose-100 transition-all active:scale-[0.98]"
+            >
               I Slipped / I'm Struggling
             </button>
           </div>
 
-          <div className="bg-slate-50 p-6 rounded-[32px] space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="font-bold text-slate-400 uppercase tracking-widest text-xs">Streak</span>
-              <span className="font-black text-4xl text-slate-900">{streak} Days</span>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-center">
+              <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Streak</span>
+              <span className="text-3xl font-black text-slate-900">{streak} <span className="text-xs font-bold text-slate-400">days</span></span>
             </div>
-            <div className="border-t border-slate-200 pt-3 flex justify-between items-center">
-              <span className="font-bold text-slate-400 uppercase tracking-widest text-xs">Freezes</span>
-              <div className="flex gap-2">
-                {[...Array(freezes)].map((_, i) => {
+            <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-center">
+              <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Freezes</span>
+              <div className="flex justify-center gap-1.5 mt-2">
+                {[...Array(2)].map((_, i) => {
+                  const hasFreeze = freezes > i;
                   const used = freezesUsed.length > i;
                   return (
-                    <div key={i} className={`text-2xl ${used ? 'opacity-40' : ''}`}>
+                    <div key={i} className={`text-xl ${!hasFreeze ? 'opacity-10 grayscale' : used ? 'opacity-30' : 'drop-shadow-sm animate-pulse'}`}>
                       ❄️
                     </div>
                   );
@@ -186,13 +196,15 @@ export default function Checkin() {
             </div>
           </div>
 
-          {/* CALENDAR SECTION */}
+          {/* ACTIVITY MAP */}
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-[0.2em]">Activity Map</h3>
-            <h4 className="text-lg font-black text-slate-900">{new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' })}</h4>
-            <div className="grid grid-cols-7 gap-2">
-              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d, i) => (
-                <div key={i} className="text-[10px] font-black text-slate-300">{d.charAt(0)}</div>
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">Activity Map</h3>
+              <span className="text-[10px] font-black text-slate-900">{new Date(year, month).toLocaleString('default', { month: 'short' })}</span>
+            </div>
+            <div className="grid grid-cols-7 gap-1.5">
+              {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
+                <div key={i} className="text-[8px] font-black text-slate-300 text-center">{d}</div>
               ))}
               {calendarDays.map((day, i) => {
                 if (!day) return <div key={`empty-${i}`} />;
@@ -201,83 +213,72 @@ export default function Checkin() {
                 const isSlip = slips.includes(dateStr);
                 const isFrozen = freezesUsed.includes(dateStr);
                 
-                let bgColor = 'bg-slate-100';
-                let icon = '';
+                let bgColor = 'bg-slate-50';
+                let dotColor = '';
                 if (isStrong) {
-                  bgColor = 'bg-emerald-500 text-white';
-                  icon = '✓';
+                  bgColor = 'bg-blue-600 text-white';
                 } else if (isFrozen) {
-                  bgColor = 'bg-blue-400 text-white';
-                  icon = '❄️';
+                  bgColor = 'bg-cyan-400 text-white';
                 } else if (isSlip) {
                   bgColor = 'bg-rose-500 text-white';
-                  icon = '✗';
                 }
 
                 return (
-                  <div key={day} className={`aspect-square flex flex-col items-center justify-center rounded-xl text-xs font-bold ${bgColor}`}>
-                    <div>{day}</div>
-                    {icon && <div className="text-xs">{icon}</div>}
+                  <div key={day} className={`aspect-square flex items-center justify-center rounded-lg text-[10px] font-bold transition-colors ${bgColor} ${!isStrong && !isSlip && !isFrozen ? 'text-slate-400 hover:bg-slate-100' : ''}`}>
+                    {day}
                   </div>
                 );
               })}
             </div>
           </div>
 
-          {/* FREEZE INFO SECTION */}
-          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-5 rounded-3xl border border-blue-200 space-y-3">
-            <h4 className="font-black text-slate-900 text-sm">❄️ How Freezes Work</h4>
-            <ul className="text-xs text-slate-700 space-y-2">
-              <li><strong>3 days streak:</strong> Earn 1 freeze</li>
-              <li><strong>6 days streak:</strong> Earn 2 freezes (maximum)</li>
-              <li><strong>Miss a day?</strong> Freeze is used automatically, streak stays safe</li>
-              <li><strong>No freezes left?</strong> Streak resets, but you can rebuild it</li>
-            </ul>
-          </div>
-
           {quote && (
-            <div className="p-6 bg-blue-50 rounded-3xl border border-blue-100 animate-in zoom-in duration-500">
-              <p className="text-blue-800 font-medium italic">"{quote}"</p>
+            <div className="p-5 bg-blue-50/50 rounded-2xl border border-blue-100/50 animate-in fade-in slide-in-from-bottom-2">
+              <p className="text-blue-800 text-sm font-medium italic text-center leading-relaxed">"{quote}"</p>
             </div>
           )}
 
-          <div className="flex flex-col gap-4 pt-4">
-            <Link href="/" className="w-full bg-slate-100 text-slate-600 py-4 rounded-3xl font-bold hover:bg-slate-200 transition-all active:scale-95">
-              Back to Dashboard
+          <div className="pt-4">
+            <Link href="/" className="group w-full bg-slate-900 text-white py-4 rounded-[20px] font-bold hover:bg-slate-800 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+              <span>←</span>
+              Go Back
             </Link>
-            <button onClick={logout} className="text-slate-300 text-[10px] font-bold uppercase tracking-[0.2em] hover:text-red-400">Logout</button>
           </div>
         </div>
 
-        {/* DIARY FORM MODAL */}
+        {/* DIARY MODAL (Updated) */}
         {showDiaryForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-[40px] shadow-2xl p-10 max-w-md w-full space-y-6">
-              <h2 className="text-2xl font-black text-slate-900">Daily Diary</h2>
+          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
+            <div className="bg-white rounded-[32px] shadow-2xl p-8 max-w-md w-full space-y-6 border border-slate-100 animate-in zoom-in-95 duration-300">
+              <h2 className="text-xl font-black text-slate-900">Daily Reflection</h2>
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-bold text-slate-600 mb-3">How strong was your urge to relapse? (0-10)</label>
-                  <div className="flex items-center gap-4">
-                    <input 
-                      type="range" 
-                      min="0" 
-                      max="10" 
-                      value={urgeLevel}
-                      onChange={(e) => setUrgeLevel(parseInt(e.target.value))}
-                      className="flex-1 h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer"
-                    />
-                    <div className="text-3xl font-black text-slate-900 w-12 text-center">{urgeLevel}</div>
+                  <div className="flex justify-between items-center mb-3">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Urge Intensity</label>
+                    <span className="text-xl font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-xl">{urgeLevel}</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="10" 
+                    value={urgeLevel}
+                    onChange={(e) => setUrgeLevel(parseInt(e.target.value))}
+                    className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  />
+                  <div className="flex justify-between mt-2">
+                    <span className="text-[10px] font-bold text-slate-300 uppercase">None</span>
+                    <span className="text-[10px] font-bold text-slate-300 uppercase">Extreme</span>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-slate-600 mb-2">What are you feeling right now?</label>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Today's Notes</label>
                   <textarea 
                     value={diaryNotes}
                     onChange={(e) => setDiaryNotes(e.target.value)}
-                    placeholder="Write your thoughts, feelings, and reflections..."
-                    className="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl font-medium text-slate-900 outline-none focus:border-blue-400 resize-none h-28"
+                    placeholder="How was your day? Any triggers?"
+                    className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl font-medium text-slate-900 outline-none focus:border-blue-400 focus:bg-white transition-all resize-none h-32 text-sm"
                   />
                 </div>
               </div>
@@ -289,13 +290,13 @@ export default function Checkin() {
                     setUrgeLevel(5);
                     setDiaryNotes('');
                   }}
-                  className="flex-1 bg-slate-100 text-slate-600 py-3 rounded-2xl font-bold hover:bg-slate-200 transition-all"
+                  className="flex-1 bg-slate-50 text-slate-500 py-3.5 rounded-xl font-bold hover:bg-slate-100 transition-all"
                 >
                   Cancel
                 </button>
                 <button 
                   onClick={submitDiary}
-                  className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-2xl font-bold shadow-lg transition-all"
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-blue-100 transition-all"
                 >
                   Save Entry
                 </button>

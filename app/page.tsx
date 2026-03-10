@@ -69,50 +69,64 @@ export default function Home() {
 
   if (!isLoggedIn) {
     return (
-      <main className="min-h-screen bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-blue-100 via-emerald-50 to-white flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white/70 backdrop-blur-2xl rounded-[40px] shadow-2xl border border-white/40 p-10 space-y-8">
-          <div className="text-center space-y-2">
-            <h1 className="text-4xl font-black text-slate-900 tracking-tighter">
-              Recovery <span className="text-blue-600">Path</span>
-            </h1>
-            <p className="text-slate-500 font-medium">Your private journey starts here.</p>
+      <main className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4">
+        <div className="max-w-md w-full space-y-8 animate-in fade-in zoom-in-95 duration-700">
+          <div className="text-center space-y-4">
+            <div className="w-20 h-20 bg-blue-600 rounded-[28px] mx-auto flex items-center justify-center shadow-2xl shadow-blue-200 transform rotate-3 hover:rotate-0 transition-transform duration-500">
+              <span className="text-4xl">🌱</span>
+            </div>
+            <div className="space-y-1">
+              <h1 className="text-4xl font-black text-slate-900 tracking-tight">
+                Recovery <span className="text-blue-600">Path</span>
+              </h1>
+              <p className="text-slate-400 font-medium">Your private space for growth.</p>
+            </div>
           </div>
 
-          <div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl">
-            <p className="text-xs font-bold text-amber-800 leading-relaxed">
-              ⚠️ IMPORTANT: We value your privacy. Your data is stored anonymously. 
-              <span className="block mt-1">PLEASE REMEMBER YOUR ID AND PASSWORD. We cannot recover them if lost.</span>
-            </p>
-          </div>
+          <div className="bg-white rounded-[32px] shadow-sm border border-slate-100 p-8 md:p-10 space-y-6">
+            <div className="space-y-4">
+              <div className="relative group">
+                <span className="absolute left-5 top-5 text-slate-300 group-focus-within:text-blue-500 transition-colors">👤</span>
+                <input
+                  placeholder="Anonymous User ID"
+                  className="w-full bg-slate-50 border border-slate-100 p-5 pl-12 rounded-2xl font-bold text-slate-900 outline-none focus:border-blue-400 focus:bg-white transition-all"
+                  onChange={(e) => setUserId(e.target.value.toLowerCase())}
+                />
+              </div>
+              <div className="relative group">
+                <span className="absolute left-5 top-5 text-slate-300 group-focus-within:text-blue-500 transition-colors">🔑</span>
+                <input
+                  type="password"
+                  placeholder="Secret Password"
+                  className="w-full bg-slate-50 border border-slate-100 p-5 pl-12 rounded-2xl font-bold text-slate-900 outline-none focus:border-blue-400 focus:bg-white transition-all"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+              
+              <button 
+                onClick={() => handleAuth(userId, password)} 
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-5 rounded-2xl font-bold text-lg shadow-lg shadow-blue-100 transition-all active:scale-[0.98]"
+              >
+                {isLogin ? 'Login' : 'Start My Journey'}
+              </button>
+              
+              <button 
+                onClick={() => setIsLogin(!isLogin)} 
+                className="w-full text-slate-400 font-bold text-xs hover:text-slate-600 transition-colors uppercase tracking-widest"
+              >
+                {isLogin ? "Need an account? Create one" : "Have an account? Login"}
+              </button>
+            </div>
 
-          <div className="space-y-4">
-            <input
-              placeholder="Anonymous User ID"
-              className="w-full bg-white border-2 border-slate-100 p-5 rounded-3xl font-bold text-slate-900 outline-none focus:border-blue-400 transition-all"
-              onChange={(e) => setUserId(e.target.value.toLowerCase())}
-            />
-            <input
-              type="password"
-              placeholder="Secret Password"
-              className="w-full bg-white border-2 border-slate-100 p-5 rounded-3xl font-bold text-slate-900 outline-none focus:border-blue-400 transition-all"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <button 
-              onClick={() => handleAuth(userId, password)} 
-              className="w-full bg-slate-900 hover:bg-blue-600 text-white py-5 rounded-3xl font-black text-xl shadow-xl transition-all active:scale-95"
-            >
-              {isLogin ? 'Login' : 'Start My Journey'}
-            </button>
-            <button 
-              onClick={() => setIsLogin(!isLogin)} 
-              className="w-full text-slate-400 font-bold text-sm hover:text-slate-600 transition-colors"
-            >
-              {isLogin ? "Don't have an ID? Create one" : "Already have an ID? Login"}
-            </button>
+            <div className="bg-amber-50/50 border border-amber-100 p-4 rounded-xl">
+              <p className="text-[10px] font-bold text-amber-700 leading-relaxed text-center uppercase tracking-wider">
+                ⚠️ Privacy First: Your data is encrypted. We cannot recover lost credentials.
+              </p>
+            </div>
           </div>
 
           {msg && (
-            <div className="text-center text-sm font-bold text-rose-600 bg-rose-50 p-4 rounded-2xl animate-in fade-in slide-in-from-top-2">
+            <div className="text-center text-xs font-bold text-rose-500 bg-rose-50 p-4 rounded-xl animate-in fade-in slide-in-from-top-2">
               {msg}
             </div>
           )}
@@ -122,78 +136,116 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-blue-100 via-emerald-50 to-white p-4 py-12">
+    <main className="min-h-screen bg-[#F8FAFC] p-4 py-8 md:py-12">
       <div className="max-w-4xl mx-auto space-y-8">
         
         {/* HEADER */}
-        <div className="flex justify-between items-center bg-white/40 backdrop-blur-md p-6 rounded-[32px] border border-white/40 shadow-sm">
-          <div>
-            <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Welcome Back</h2>
-            <p className="text-2xl font-black text-slate-900">@{userId}</p>
+        <div className="flex justify-between items-center bg-white p-6 rounded-[24px] shadow-sm border border-slate-100">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white text-xl font-black shadow-lg shadow-blue-200">
+              {userId.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Logged in as</h2>
+              <p className="text-lg font-black text-slate-900">@{userId}</p>
+            </div>
           </div>
-          <button onClick={logout} className="text-xs font-bold text-slate-400 hover:text-rose-500 uppercase tracking-widest transition-colors">Logout</button>
+          <button 
+            onClick={logout} 
+            className="group flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-rose-50 transition-all"
+          >
+            <span className="text-xs font-bold text-slate-400 group-hover:text-rose-500 uppercase tracking-widest transition-colors">Logout</span>
+            <span className="text-slate-300 group-hover:text-rose-400 transition-colors">→</span>
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
           
           {/* ACTION SECTION */}
           <div className="space-y-6">
-            <div className="bg-white/60 backdrop-blur-2xl rounded-[40px] shadow-xl border border-white/40 p-8 space-y-6">
-              <h3 className="text-xl font-black text-slate-900">Quick Actions</h3>
+            <div className="bg-white rounded-[32px] shadow-sm border border-slate-100 p-8 space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-black text-slate-900">Daily Rituals</h3>
+                <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-wider">Active</span>
+              </div>
               
               <div className="grid gap-4">
                 <Link href="/checkin">
-                  <button className="w-full bg-slate-900 hover:bg-blue-600 transition-all text-white px-8 py-6 rounded-[32px] font-bold text-xl shadow-2xl active:scale-95 flex items-center justify-between">
-                    <span>Daily Check-in</span>
-                    <span className="text-2xl">⚡</span>
+                  <button className="w-full bg-blue-600 hover:bg-blue-700 transition-all text-white px-8 py-5 rounded-[20px] font-bold text-lg shadow-lg shadow-blue-100 active:scale-[0.98] flex items-center justify-between group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-xl">✨</div>
+                      <span>Daily Check-in</span>
+                    </div>
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity translate-x-[-10px] group-hover:translate-x-0">→</span>
                   </button>
                 </Link>
 
-                <Link href="/test">
-                  <button className="w-full bg-white border-2 border-slate-200 text-slate-700 hover:border-blue-400 transition-all px-8 py-5 rounded-[28px] font-bold text-lg active:scale-95 flex items-center justify-between">
-                    <span>Dependency Test</span>
-                    <span className="text-2xl">📝</span>
-                  </button>
-                </Link>
+                <div className="grid grid-cols-2 gap-4">
+                  <Link href="/test">
+                    <button className="w-full bg-slate-50 border border-slate-200 text-slate-700 hover:border-blue-200 hover:bg-white transition-all p-5 rounded-[20px] font-bold text-sm active:scale-[0.98] flex flex-col items-center gap-2">
+                      <span className="text-2xl">📝</span>
+                      <span>Progress Test</span>
+                    </button>
+                  </Link>
 
-                <Link href="/panic">
-                  <button className="w-full bg-rose-50 border-2 border-rose-100 text-rose-600 py-4 rounded-[28px] font-black text-lg hover:bg-rose-100 transition-all flex items-center justify-center gap-3 active:scale-95">
-                    🚨 EMERGENCY CALM DOWN
-                  </button>
-                </Link>
+                  <Link href="/panic">
+                    <button className="w-full bg-rose-50 border border-rose-100 text-rose-600 hover:bg-rose-100 transition-all p-5 rounded-[20px] font-bold text-sm active:scale-[0.98] flex flex-col items-center gap-2">
+                      <span className="text-2xl">🚨</span>
+                      <span>SOS Mode</span>
+                    </button>
+                  </Link>
+                </div>
               </div>
             </div>
 
             {/* EDUCATIONAL TIP */}
-            <div className="bg-emerald-900 text-emerald-50 rounded-[40px] p-8 space-y-4">
-              <h4 className="text-lg font-bold">Pro Tip: The 15-Minute Rule</h4>
-              <p className="opacity-80 text-sm leading-relaxed">
-                Most intense cravings last less than 15 minutes. If you can distract yourself for just a quarter of an hour, the urge will significantly subside. You've got this.
-              </p>
+            <div className="bg-slate-900 text-white rounded-[32px] p-8 space-y-4 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-blue-600/20 transition-colors"></div>
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400">The 15-Minute Rule</h4>
+                </div>
+                <p className="text-slate-300 text-sm leading-relaxed">
+                  Cravings are like waves; they peak and then recede. If you can ride it out for 15 minutes, the intensity will drop by 80%. Stay strong.
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* REPORT SECTION (Moved to Homepage) */}
+          {/* REPORT SECTION */}
           <div className="space-y-6">
-            <div className="bg-white/60 backdrop-blur-2xl rounded-[40px] shadow-xl border border-white/40 p-8 space-y-6">
-              <h3 className="text-xl font-black text-slate-900">Your Progress Report</h3>
+            <div className="bg-white rounded-[32px] shadow-sm border border-slate-100 p-8 space-y-6">
+              <h3 className="text-xl font-black text-slate-900">Your Impact</h3>
               
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-emerald-50 p-6 rounded-3xl border border-emerald-100">
-                  <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-1">Total Strong</p>
-                  <p className="text-3xl font-black text-emerald-700">{checkins.length}</p>
+                <div className="bg-emerald-50/50 p-6 rounded-2xl border border-emerald-100/50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
+                    <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Strong Days</p>
+                  </div>
+                  <p className="text-3xl font-black text-slate-900">{checkins.length}</p>
                 </div>
-                <div className="bg-blue-50 p-6 rounded-3xl border border-blue-100">
-                  <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1">Current Streak</p>
-                  <p className="text-3xl font-black text-blue-700">{streak} Days</p>
+                <div className="bg-blue-50/50 p-6 rounded-2xl border border-blue-100/50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Current Streak</p>
+                  </div>
+                  <p className="text-3xl font-black text-slate-900">{streak} <span className="text-xs font-bold text-slate-400">days</span></p>
                 </div>
-                <div className="bg-rose-50 p-6 rounded-3xl border border-rose-100">
-                  <p className="text-[10px] font-bold text-rose-600 uppercase tracking-widest mb-1">Total Slips</p>
-                  <p className="text-3xl font-black text-rose-700">{slips.length}</p>
+                <div className="bg-rose-50/50 p-6 rounded-2xl border border-rose-100/50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-1.5 h-1.5 bg-rose-500 rounded-full"></div>
+                    <p className="text-[10px] font-bold text-rose-600 uppercase tracking-widest">Total Slips</p>
+                  </div>
+                  <p className="text-3xl font-black text-slate-900">{slips.length}</p>
                 </div>
-                <div className="bg-purple-50 p-6 rounded-3xl border border-purple-100">
-                  <p className="text-[10px] font-bold text-purple-600 uppercase tracking-widest mb-1">Avg Urge</p>
-                  <p className="text-3xl font-black text-purple-700">
+                <div className="bg-purple-50/50 p-6 rounded-2xl border border-purple-100/50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                    <p className="text-[10px] font-bold text-purple-600 uppercase tracking-widest">Avg Urge</p>
+                  </div>
+                  <p className="text-3xl font-black text-slate-900">
                     {diaryEntries.length > 0 
                       ? (diaryEntries.reduce((sum, e) => sum + e.urgeLevel, 0) / diaryEntries.length).toFixed(1) 
                       : '0.0'}
@@ -202,16 +254,16 @@ export default function Home() {
               </div>
 
               {diaryEntries.length > 0 && (
-                <div className="space-y-4 pt-4 border-t border-slate-100">
+                <div className="space-y-4 pt-4 border-t border-slate-50">
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Recent Reflections</p>
-                  <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
-                    {[...diaryEntries].reverse().slice(0, 3).map((entry, idx) => (
-                      <div key={idx} className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100 space-y-2">
-                        <div className="flex justify-between items-center">
+                  <div className="space-y-3">
+                    {[...diaryEntries].reverse().slice(0, 2).map((entry, idx) => (
+                      <div key={idx} className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-1">
+                        <div className="flex justify-between items-center mb-1">
                           <p className="text-[10px] font-bold text-slate-400">{new Date(entry.date).toLocaleDateString()}</p>
-                          <p className="text-[10px] font-bold text-slate-500 bg-white px-2 py-0.5 rounded-full border border-slate-100">Urge: {entry.urgeLevel}/10</p>
+                          <span className="text-[10px] font-bold text-blue-600 px-2 py-0.5 bg-blue-50 rounded-full">Urge: {entry.urgeLevel}/10</span>
                         </div>
-                        {entry.notes && <p className="text-sm text-slate-600 line-clamp-2">{entry.notes}</p>}
+                        {entry.notes && <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed italic">"{entry.notes}"</p>}
                       </div>
                     ))}
                   </div>
@@ -223,8 +275,8 @@ export default function Home() {
         </div>
 
         {/* FOOTER */}
-        <div className="text-center opacity-30 text-[10px] font-bold uppercase tracking-[0.3em] py-8">
-          Built for Freedom • 2026
+        <div className="text-center opacity-20 text-[10px] font-bold uppercase tracking-[0.4em] py-12">
+          Recovery Path System • Secure & Anonymous
         </div>
 
       </div>

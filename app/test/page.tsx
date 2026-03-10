@@ -95,34 +95,45 @@ export default function AddictionTest() {
   if (showResult) {
     const { percentage, level, color } = calculateResult();
     return (
-      <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-[40px] shadow-xl p-10 text-center space-y-8">
-          <h1 className="text-3xl font-black text-slate-900">Your Results</h1>
+      <main className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-[32px] shadow-sm p-10 text-center space-y-8 border border-slate-100 animate-in zoom-in-95 duration-500">
           <div className="space-y-2">
-            <div className={`text-6xl font-black ${color}`}>{percentage}%</div>
-            <p className="text-slate-500 font-bold uppercase tracking-widest text-sm">Dependency Level: {level}</p>
+            <h1 className="text-2xl font-black text-slate-900">Your Results</h1>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Assessment Complete</p>
           </div>
           
-          <div className="bg-slate-50 rounded-3xl p-6 text-left space-y-4">
-            <h3 className="font-bold text-slate-800">Statistics Breakdown</h3>
-            <div className="space-y-2 text-sm text-slate-600">
-              <div className="flex justify-between">
-                <span>Psychological Impact</span>
-                <span className="font-bold">{Math.min(100, percentage + 5)}%</span>
+          <div className="relative inline-flex items-center justify-center">
+            <div className={`text-7xl font-black ${color} drop-shadow-sm`}>{percentage}%</div>
+            <div className="absolute -inset-4 border-2 border-slate-50 rounded-full -z-10 animate-pulse"></div>
+          </div>
+
+          <div className="space-y-1">
+            <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Dependency Level</p>
+            <p className={`text-xl font-black ${color}`}>{level}</p>
+          </div>
+          
+          <div className="bg-slate-50 rounded-2xl p-6 text-left space-y-4 border border-slate-100">
+            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">Insights</h3>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-slate-600 font-medium">Habit Strength</span>
+                <span className="font-bold text-slate-900">{percentage}%</span>
               </div>
-              <div className="flex justify-between">
-                <span>Behavioral Habit Strength</span>
-                <span className="font-bold">{percentage}%</span>
+              <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                <div className={`h-full ${percentage > 70 ? 'bg-rose-500' : percentage > 40 ? 'bg-orange-500' : 'bg-emerald-500'}`} style={{ width: `${percentage}%` }}></div>
               </div>
-              <div className="flex justify-between">
-                <span>Recovery Readiness</span>
-                <span className="font-bold">{100 - percentage}%</span>
-              </div>
+              <p className="text-[11px] text-slate-500 leading-relaxed italic">
+                {percentage > 70 
+                  ? "This indicates a significant impact on your life. Consider seeking professional support or using the SOS tools frequently."
+                  : percentage > 40 
+                  ? "Your dependency is moderate. Focus on identifying triggers in your daily diary."
+                  : "You have a healthy relationship with your habits, but stay vigilant."}
+              </p>
             </div>
           </div>
 
           <Link href="/">
-            <button className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold hover:bg-blue-600 transition-all">
+            <button className="w-full bg-slate-900 text-white py-4 rounded-[20px] font-bold hover:bg-slate-800 transition-all active:scale-[0.98]">
               Back to Home
             </button>
           </Link>
@@ -134,11 +145,18 @@ export default function AddictionTest() {
   const question = questions[currentStep];
 
   return (
-    <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-[40px] shadow-xl p-10 space-y-8">
-        <div className="space-y-2">
-          <div className="text-xs font-bold text-blue-600 uppercase tracking-widest">Question {currentStep + 1} of {questions.length}</div>
-          <h2 className="text-2xl font-bold text-slate-900 leading-tight">{question.text}</h2>
+    <main className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4">
+      <div className="max-w-md w-full bg-white rounded-[32px] shadow-sm p-8 md:p-10 space-y-8 border border-slate-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-widest">Step {currentStep + 1}/{questions.length}</span>
+            <div className="flex gap-1">
+              {questions.map((_, i) => (
+                <div key={i} className={`h-1 w-4 rounded-full transition-all duration-500 ${i <= currentStep ? 'bg-blue-600' : 'bg-slate-100'}`}></div>
+              ))}
+            </div>
+          </div>
+          <h2 className="text-2xl font-black text-slate-900 leading-tight tracking-tight">{question.text}</h2>
         </div>
 
         <div className="space-y-3">
@@ -146,12 +164,15 @@ export default function AddictionTest() {
             <button
               key={idx}
               onClick={() => handleAnswer(question.scores[idx])}
-              className="w-full text-left p-5 rounded-2xl border-2 border-slate-100 hover:border-blue-500 hover:bg-blue-50 transition-all font-medium text-slate-700"
+              className="w-full text-left p-5 rounded-2xl border border-slate-100 bg-slate-50/50 hover:border-blue-400 hover:bg-white transition-all font-bold text-slate-700 active:scale-[0.98] group flex justify-between items-center"
             >
-              {option}
+              <span>{option}</span>
+              <span className="opacity-0 group-hover:opacity-100 transition-opacity text-blue-500">→</span>
             </button>
           ))}
         </div>
+        
+        <p className="text-[10px] text-slate-400 text-center uppercase tracking-widest font-medium">Your answers are 100% private and never stored.</p>
       </div>
     </main>
   );
