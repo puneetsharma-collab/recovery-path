@@ -94,7 +94,7 @@ export default function PanicPage() {
           <div className="w-24 h-24 bg-white/20 rounded-full mx-auto flex items-center justify-center animate-pulse shadow-2xl shadow-orange-900/20">
             <span className="text-5xl">🧘</span>
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tight">Dharamshala</h1>
+          <h1 className="text-3xl font-black text-white tracking-tight">Ground Your Soul</h1>
           <p className="text-orange-100 font-medium leading-relaxed">
             Immediate Mindfulness! This feeling is temporary. You have survived every urge you've ever had. You will survive this one too.
           </p>

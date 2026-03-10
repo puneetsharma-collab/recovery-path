@@ -198,7 +198,7 @@ export default function Home() {
                   <Link href="/panic">
                     <button className="w-full bg-orange-50 border border-orange-100 text-orange-600 hover:bg-orange-100 transition-all p-5 rounded-[20px] font-bold text-sm active:scale-[0.98] flex flex-col items-center gap-2">
                       <AlertCircle size={24} />
-                      <span>Dharamshala</span>
+                      <span>Ground Your Soul</span>
                     </button>
                   </Link>
                 </div>
@@ -225,38 +225,54 @@ export default function Home() {
             <div className="bg-white rounded-[32px] shadow-sm border border-slate-100 p-8 space-y-6">
               <h3 className="text-xl font-black text-slate-900">Your Pilgrimage</h3>
               
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-emerald-50/50 p-6 rounded-2xl border border-emerald-100/50">
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                    <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Steps Climbed!</p>
-                  </div>
-                  <p className="text-3xl font-black text-slate-900">{checkins.length}</p>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-purple-50 p-4 rounded-xl border border-purple-100 text-center">
+                  <p className="text-[10px] font-bold text-purple-600 uppercase tracking-widest mb-1">Sankalpa Resolution</p>
+                  <p className="text-2xl font-black text-slate-900">{checkins.length}</p>
                 </div>
-                <div className="bg-saffron/5 p-6 rounded-2xl border border-saffron/10">
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="w-1.5 h-1.5 bg-saffron rounded-full"></div>
-                    <p className="text-[10px] font-bold text-saffron uppercase tracking-widest">Current Ascent</p>
-                  </div>
-                  <p className="text-3xl font-black text-slate-900">{streak} <span className="text-xs font-bold text-slate-400">steps</span></p>
+                <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 text-center">
+                  <p className="text-[10px] font-bold text-amber-600 uppercase tracking-widest mb-1">Abhyasa Practice</p>
+                  <p className="text-2xl font-black text-slate-900">{streak}</p>
                 </div>
-                <div className="bg-orange-50/50 p-6 rounded-2xl border border-orange-100/50">
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="w-1.5 h-1.5 bg-orange-500 rounded-full"></div>
-                    <p className="text-[10px] font-bold text-orange-600 uppercase tracking-widest">Detours Taken</p>
-                  </div>
-                  <p className="text-3xl font-black text-slate-900">{slips.length}</p>
-                </div>
-                <div className="bg-blue-50/50 p-6 rounded-2xl border border-blue-100/50">
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                    <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Mindful Resistance</p>
-                  </div>
-                  <p className="text-3xl font-black text-slate-900">
+                <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100 text-center">
+                  <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-1">Dhyana Meditation</p>
+                  <p className="text-2xl font-black text-slate-900">
                     {diaryEntries.length > 0 
-                      ? (diaryEntries.reduce((sum, e) => sum + (e.resistanceLevel || 0), 0) / diaryEntries.length).toFixed(1) 
-                      : '0.0'}
+                      ? (diaryEntries.reduce((sum, e) => sum + (e.resistanceLevel || 0), 0) / diaryEntries.length).toFixed(0) 
+                      : '0'}
                   </p>
+                </div>
+              </div>
+
+              <div className="space-y-3 pt-4 border-t border-slate-50">
+                <div className="flex justify-between items-center">
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Progress Calendar</p>
+                  <p className="text-xs font-bold text-saffron">+{slips.length === 0 ? '🔥' : ''}</p>
+                </div>
+                <div className="bg-slate-50 p-4 rounded-2xl">
+                  <div className="grid grid-cols-7 gap-2">
+                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
+                      <div key={idx} className="text-center text-[10px] font-bold text-slate-400 mb-2">{day}</div>
+                    ))}
+                    {Array.from({ length: 35 }).map((_, i) => {
+                      const date = new Date();
+                      date.setDate(date.getDate() - (34 - i));
+                      const dateStr = date.toISOString().split('T')[0];
+                      const isActive = checkins.includes(dateStr);
+                      return (
+                        <div 
+                          key={i}
+                          className={`aspect-square rounded-lg flex items-center justify-center text-sm font-bold transition-all ${
+                            isActive 
+                              ? 'bg-saffron text-white shadow-lg shadow-saffron/20' 
+                              : 'bg-slate-100 text-slate-300 hover:bg-slate-200'
+                          }`}
+                        >
+                          {isActive ? '🕯️' : ''}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 

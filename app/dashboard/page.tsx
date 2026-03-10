@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Sparkles, Wind, TrendingUp, Sun, Cloud, Moon, ArrowLeft, X, PartyPopper, CheckCircle2, Circle, Scroll } from 'lucide-react';
+import { Sparkles, Wind, TrendingUp, Sun, Cloud, Moon, ArrowLeft, X, PartyPopper, CheckCircle2, Circle, Scroll, ChevronRight, History } from 'lucide-react';
 import Link from 'next/link';
 import YatraMap from '@/components/YatraMap';
 
@@ -197,24 +197,6 @@ export default function Dashboard() {
           </div>
 
         </div>
-
-        <p className="text-[10px] font-bold text-slate-300 mt-12 text-center uppercase tracking-[0.4em]">
-          The Sacred Yatra • Secure & Anonymous
-        </p>
-      </div>
-    </main>
-  );
-}
-
-
-        <p className="text-[10px] font-bold text-slate-300 mt-12 text-center uppercase tracking-[0.4em]">
-          The Sacred Yatra • Secure & Anonymous
-        </p>
-      </div>
-    </main>
-  );
-}
-
 
         <p className="text-[10px] font-bold text-slate-300 mt-12 text-center uppercase tracking-[0.4em]">
           The Sacred Yatra • Secure & Anonymous
