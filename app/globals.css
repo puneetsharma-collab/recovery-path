@@ -3,25 +3,117 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background: #edf8fb;
+  --background-soft: #fff8ec;
+  --foreground: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --card: rgba(255, 255, 255, 0.82);
+  --amber-main: #f59e0b;
+  --amber-deep: #d97706;
+  --emerald-main: #10b981;
+  --rose-main: #f43f5e;
+  --cyan-main: #06b6d4;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  min-height: 100%;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  color: var(--foreground);
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.95), transparent 35%),
+    radial-gradient(circle at top right, rgba(255, 244, 214, 0.8), transparent 30%),
+    linear-gradient(180deg, var(--background) 0%, var(--background-soft) 100%);
+  font-feature-settings: 'rlig' 1, 'calt' 1;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+input,
+textarea {
+  color: var(--foreground);
+}
+
+::selection {
+  background: rgba(245, 158, 11, 0.22);
+  color: var(--foreground);
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/80 backdrop-blur border border-white shadow-sm;
+  }
+
+  .soft-card {
+    @apply bg-white rounded-[32px] border border-slate-100 shadow-sm;
+  }
+
+  .journey-title {
+    @apply text-slate-900 font-black tracking-tight;
+  }
+
+  .journey-muted {
+    @apply text-slate-500;
+  }
+
+  .primary-btn {
+    @apply bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-500 hover:to-orange-500 text-white font-bold rounded-2xl shadow-lg transition-all;
+  }
+
+  .secondary-btn {
+    @apply bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl transition-all;
+  }
+
+  .success-btn {
+    @apply bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-2xl shadow-lg transition-all;
+  }
+
+  .danger-btn {
+    @apply bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold rounded-2xl transition-all;
+  }
+
+  .pill-label {
+    @apply text-[10px] uppercase tracking-[0.2em] font-bold text-slate-400;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
