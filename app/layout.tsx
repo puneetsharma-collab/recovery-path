@@ -4,7 +4,7 @@ import { Inter } from 'next/font/google';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export const meta Metadata = {
+export const metadata: Metadata = {
   title: 'Sankalpa Journey',
   description: 'An anonymous recovery journey to help users quit bad habits through daily check-ins, path progression, freeze points, shrines, and healing milestones.',
   openGraph: {
