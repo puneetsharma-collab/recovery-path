@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 const MOTIVATION = [
   "One day at a time. You're doing amazing! ✨",
@@ -149,26 +150,9 @@ export default function Checkin() {
     return (
       <main className="min-h-screen bg-slate-50 flex justify-center p-4 py-12">
         <div className="bg-white rounded-[40px] shadow-2xl p-10 max-w-md w-full space-y-8 text-center border border-slate-100">
-          <h1 className="text-3xl font-black text-slate-900">Path of @{userId}</h1>
+          <h1 className="text-3xl font-black text-slate-900">Daily Check-in</h1>
+          <p className="text-slate-500 font-medium">Be honest with yourself, @{userId}.</p>
 
-          {/* TAB NAVIGATION */}
-          <div className="flex gap-2 bg-slate-100 p-2 rounded-2xl">
-            <button 
-              onClick={() => setActiveTab('checkin')}
-              className={`flex-1 py-3 rounded-xl font-bold transition-all ${activeTab === 'checkin' ? 'bg-white text-slate-900 shadow-md' : 'text-slate-500'}`}
-            >
-              Check-in
-            </button>
-            <button 
-              onClick={() => setActiveTab('report')}
-              className={`flex-1 py-3 rounded-xl font-bold transition-all ${activeTab === 'report' ? 'bg-white text-slate-900 shadow-md' : 'text-slate-500'}`}
-            >
-              Report
-            </button>
-          </div>
-
-          {activeTab === 'checkin' ? (
-            <>
           <div className="space-y-4">
             <button onClick={() => doCheckin('strong')} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-6 rounded-3xl font-black text-2xl shadow-xl shadow-emerald-100 active:scale-95 transition-all">
               I Stayed Strong!
@@ -253,59 +237,13 @@ export default function Checkin() {
               <p className="text-blue-800 font-medium italic">"{quote}"</p>
             </div>
           )}
-            </>
-          ) : (
-            <>
-              {/* REPORT TAB */}
-              <div className="space-y-4 text-left">
-                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-5 rounded-3xl border border-emerald-200 space-y-2">
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Total Check-ins</p>
-                  <p className="text-4xl font-black text-emerald-600">{checkins.length}</p>
-                </div>
-                
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-5 rounded-3xl border border-blue-200 space-y-2">
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Current Streak</p>
-                  <p className="text-4xl font-black text-blue-600">{streak} Days</p>
-                </div>
 
-                <div className="bg-gradient-to-br from-rose-50 to-pink-50 p-5 rounded-3xl border border-rose-200 space-y-2">
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Slips</p>
-                  <p className="text-4xl font-black text-rose-600">{slips.length}</p>
-                </div>
-
-                <div className="bg-gradient-to-br from-purple-50 to-violet-50 p-5 rounded-3xl border border-purple-200 space-y-3">
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Average Urge Level</p>
-                  <div className="space-y-2">
-                    {diaryEntries.length > 0 ? (
-                      <>
-                        <p className="text-4xl font-black text-purple-600">{(diaryEntries.reduce((sum, entry) => sum + entry.urgeLevel, 0) / diaryEntries.length).toFixed(1)}/10</p>
-                        <p className="text-xs text-slate-600">From {diaryEntries.length} entries</p>
-                      </>
-                    ) : (
-                      <p className="text-sm text-slate-500">No diary entries yet</p>
-                    )}
-                  </div>
-                </div>
-
-                {diaryEntries.length > 0 && (
-                  <div className="space-y-3 max-h-64 overflow-y-auto">
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Recent Entries</p>
-                    {[...diaryEntries].reverse().slice(0, 5).map((entry, idx) => (
-                      <div key={idx} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
-                        <div className="flex justify-between items-center">
-                          <p className="text-xs font-bold text-slate-400">{new Date(entry.date).toLocaleDateString()}</p>
-                          <p className="text-sm font-bold text-slate-600">Urge: {entry.urgeLevel}/10</p>
-                        </div>
-                        {entry.notes && <p className="text-sm text-slate-700">{entry.notes}</p>}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-
-          <button onClick={logout} className="text-slate-300 text-[10px] font-bold uppercase tracking-[0.2em] hover:text-red-400">Logout</button>
+          <div className="flex flex-col gap-4 pt-4">
+            <Link href="/" className="w-full bg-slate-100 text-slate-600 py-4 rounded-3xl font-bold hover:bg-slate-200 transition-all active:scale-95">
+              Back to Dashboard
+            </Link>
+            <button onClick={logout} className="text-slate-300 text-[10px] font-bold uppercase tracking-[0.2em] hover:text-red-400">Logout</button>
+          </div>
         </div>
 
         {/* DIARY FORM MODAL */}
